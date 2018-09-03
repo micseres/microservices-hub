@@ -1,0 +1,40 @@
+version: '3'
+services:
+
+  hub:
+    build: ./
+    container_name: hub
+    image: zogxray/microservices-hub
+    ports:
+      - "9502:9502"
+      - "9503:9503"
+      - "9504:9504"
+    networks:
+      sms:
+        ipv4_address: 10.5.0.111
+    volumes:
+      - /var/lib/redis:/var/lib/redis
+    depends_on:
+      - redis
+    environment:
+      - FRONT_SERVER_PORT=9502
+      - SERVICE_SERVER_PORT=9503
+      - PING_SERVER_PORT=9504
+      - REDIS_PORT=6380
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6380:6379"
+    networks:
+      sms:
+        ipv4_address: 10.5.0.110
+    volumes:
+      - /home/zogxray/work/microservices-hub:/app
+    restart: always
+
+networks:
+  sms:
+    external: true
+#must run docker network create --gateway 10.5.0.1 --subnet 10.5.0.0/24 hub

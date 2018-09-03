@@ -1,0 +1,62 @@
+{
+    "name": "gepur-it/service-dispatcher",
+    "description": "Service Dispatcher",
+    "type": "php-server",
+    "license": "MIT",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Marina Mileva",
+            "email": "m934222258@gmail.com"
+        },
+        {
+            "name": "Victor Pavlov",
+            "email": "zogxray@gmail.com"
+        },
+        {
+            "name": "Andrii Yakovlev",
+            "email": "yawa20@gmail.com"
+        }
+    ],
+    "keywords": [
+        "swoole",
+        "microservice"
+    ],
+    "homepage": "https://github.com/gepur-it/service-dispatcher",
+    "require": {
+        "php": "^7.2",
+        "ext-swoole": "*",
+        "vlucas/phpdotenv": "^2.5@dev"
+    },
+    "require-dev": {
+        "eaglewu/swoole-ide-helper": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "GepurIt\\ServiceDispatcher\\": "src"
+        }
+    },
+    "autoload-dev": {
+
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "master"
+        }
+    },
+    "repositories": {
+
+    },
+    "scripts": {
+        "build": [
+            "composer install"
+        ],
+        "post-install-cmd": [
+
+        ],
+        "post-update-cmd": [
+
+        ]
+    },
+    "minimum-stability": "dev"
+}
