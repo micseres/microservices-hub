@@ -1,13 +1,11 @@
 <?php
 
-namespace GepurIt\ServiceDispatcher\Http;
+namespace Micseres\ServiceHub\Request;
 
-
-use GepurIt\ServiceDispatcher\src\Http\Middleware\CorsMiddleware;
 
 /**
  * Class Kernel
- * @package GepurIt\ServiceDispatcher\Http
+ * @package Micseres\ServiceHub\Http
  */
 class Kernel
 {
@@ -19,6 +17,6 @@ class Kernel
      * @var array
      */
     protected $middleware = [
-        CorsMiddleware::class
+
     ];
 }

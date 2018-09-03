@@ -1,6 +1,6 @@
 {
-    "name": "gepur-it/service-dispatcher",
-    "description": "Service Dispatcher",
+    "name": "gepur-it/microservices-hub",
+    "description": "Microservices hub",
     "type": "php-server",
     "license": "MIT",
     "version": "1.0.0",
@@ -22,18 +22,20 @@
         "swoole",
         "microservice"
     ],
-    "homepage": "https://github.com/gepur-it/service-dispatcher",
+    "homepage": "https://github.com/micseres/microservices-hub",
     "require": {
         "php": "^7.2",
         "ext-swoole": "*",
-        "vlucas/phpdotenv": "^2.5@dev"
+        "vlucas/phpdotenv": "^2.5@dev",
+        "psr/http-message": "^1.0@dev",
+        "psr/http-server-handler": "^1.0@dev"
     },
     "require-dev": {
         "eaglewu/swoole-ide-helper": "dev-master"
     },
     "autoload": {
         "psr-4": {
-            "GepurIt\\ServiceDispatcher\\": "src"
+            "Micseres\\ServiceHub\\": "src"
         }
     },
     "autoload-dev": {

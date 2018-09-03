@@ -8,7 +8,7 @@
  */
 
 
-use GepurIt\ServiceDispatcher\Socket\Router;
+use Micseres\ServiceHub\Request\Router;
 
 require __DIR__.'/../vendor/autoload.php';
 

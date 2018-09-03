@@ -6,11 +6,11 @@
  * Time: 19:02
  */
 
-namespace GepurIt\ServiceDispatcher\Socket;
+namespace Micseres\ServiceHub\Request;
 
 /**
  * Class Router
- * @package GepurIt\ServiceDispatcher\src\Socket
+ * @package Micseres\ServiceHub\Socket
  */
 final class Router
 {
