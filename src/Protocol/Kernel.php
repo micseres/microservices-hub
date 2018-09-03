@@ -1,6 +1,6 @@
 <?php
 
-namespace Micseres\ServiceHub\Request;
+namespace Micseres\ServiceHub\Protocol;
 
 
 /**

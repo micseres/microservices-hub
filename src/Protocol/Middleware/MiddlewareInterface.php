@@ -6,7 +6,7 @@
  * Time: 17:26
  */
 
-namespace Micseres\ServiceHub\Request\Middleware;
+namespace Micseres\ServiceHub\Protocol\Middleware;
 
 
 use Psr\Http\Message\ResponseInterface;

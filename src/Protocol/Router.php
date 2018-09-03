@@ -6,7 +6,7 @@
  * Time: 19:02
  */
 
-namespace Micseres\ServiceHub\Request;
+namespace Micseres\ServiceHub\Protocol;
 
 /**
  * Class Router

@@ -27,7 +27,7 @@ def connect(sleep):
       if response['task_id'] == task_id:
         print('\x1b[0;33;38m' + "*************" + '\x1b[0m')
         print('\x1b[0;38;38m' + "Now is {}".format(datetime.datetime.now()) + '\x1b[0m')
-        print('\x1b[0;32;38m' + "Request sent at {} and received {}".format(response['start_at'], response['done_at']) + '\x1b[0m')
+        print('\x1b[0;32;38m' + "Protocol sent at {} and received {}".format(response['start_at'], response['done_at']) + '\x1b[0m')
         print('\x1b[0;32;38m' + "Status {} for task id {} with interval {} start work at {} and end work ad {}".format(response['status'], response['task_id'], sleep, response['payload'][0]['start_at'], response['payload'][0]['done_at']) + '\x1b[0m')
         print('\x1b[0;38;38m' + "{}".format(response['payload'][0]['message']) + '\x1b[0m')
         print('\x1b[0;33;38m' + "*************" + '\x1b[0m')

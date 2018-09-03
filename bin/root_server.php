@@ -13,7 +13,7 @@
 
 require __DIR__.'/../vendor/autoload.php';
 
-use Micseres\ServiceHub\Request\Router;
+use Micseres\ServiceHub\Protocol\Router;
 
 $router = new Router();
 
