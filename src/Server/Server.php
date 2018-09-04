@@ -12,8 +12,15 @@ namespace Micseres\ServiceHub\Server;
  * Class Server
  * @package Micseres\ServiceHub\Server
  */
-abstract class Server
+class Server implements ServerInterface
 {
+    /**
+     * @var \Swoole\Server $swoole
+     */
+    private $swoole;
+
+    private $pools = [];
+
     /**
      * @param string $ip
      * @param int $port
@@ -23,7 +30,7 @@ abstract class Server
      */
     public function create(string $ip, int $port, int $mode, int $type): \Swoole\Server
     {
-        // TODO: Implement create() method.
+        $this->swoole = new \Swoole\Server($ip, $port, $mode, $type);
     }
 
     /**
@@ -31,6 +38,30 @@ abstract class Server
      */
     public function start(): void
     {
-        // TODO: Implement start() method.
+        $this->swoole->start();
+    }
+
+    /**
+     * @return \Swoole\Server
+     */
+    public function getSwoole(): \Swoole\Server
+    {
+        return $this->swoole;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPools(): array
+    {
+        return $this->pools;
+    }
+
+    /**
+     * @param Pool $pool
+     */
+    public function addPool(Pool $pool): void
+    {
+        $this->pools[] = $pool;
     }
 }

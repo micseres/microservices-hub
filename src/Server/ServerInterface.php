@@ -7,7 +7,7 @@
  */
 
 namespace Micseres\ServiceHub\Server;
-use swoole_server;
+use \Swoole\Server as SServer;
 
 /**
  * Class ServerInterface
@@ -20,12 +20,27 @@ interface ServerInterface
      * @param int $port
      * @param int $mode
      * @param int $type TCP/UDP
-     * @return \Swoole\Server
+     * @return SServer
      */
-    public function create(string $ip, int $port, int $mode, int $type): \Swoole\Server;
+    public function create(string $ip, int $port, int $mode, int $type): SServer;
 
     /**
      * Start server
      */
     public function start(): void;
+
+    /**
+     * @return SServer
+     */
+    public function getSwoole(): SServer;
+
+    /**
+     * @return array
+     */
+    public function getPools(): array;
+
+    /**
+     * @param Pool $pool
+     */
+    public function addPool(Pool $pool): void;
 }
