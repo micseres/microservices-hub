@@ -16,10 +16,14 @@ docker-compose up --build
   "action": "register",
   "message": "Register me, I am ready",
   "payload": {
-    "load": 90,
+    "route": "sleep",
+    "load": "90",
     "time": "09-05-2018 10:00:00.111111"
   }
-}
+} 
+```
+```json
+{"protocol":"1.0","action":"register","message":"Register me, I am ready","payload":{"route":"sleep","load":"90","time":"09-05-2018 10:00:00.111111"}}
 ```
 #### Hub to service ping response
 

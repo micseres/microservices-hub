@@ -26,6 +26,7 @@
     "require": {
         "php": "^7.2",
         "ext-swoole": "*",
+        "ext-json": "*",
         "vlucas/phpdotenv": "^2.5@dev",
         "psr/http-message": "^1.0@dev",
         "psr/http-server-handler": "^1.0@dev",
