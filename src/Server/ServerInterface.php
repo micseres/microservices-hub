@@ -20,9 +20,8 @@ interface ServerInterface
      * @param int $port
      * @param int $mode
      * @param int $type TCP/UDP
-     * @return SServer
      */
-    public function create(string $ip, int $port, int $mode, int $type): SServer;
+    public function create(string $ip, int $port, int $mode, int $type);
 
     /**
      * Start server

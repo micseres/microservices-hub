@@ -28,7 +28,8 @@
         "ext-swoole": "*",
         "vlucas/phpdotenv": "^2.5@dev",
         "psr/http-message": "^1.0@dev",
-        "psr/http-server-handler": "^1.0@dev"
+        "psr/http-server-handler": "^1.0@dev",
+        "monolog/monolog": "^2.0@dev"
     },
     "require-dev": {
         "eaglewu/swoole-ide-helper": "dev-master"

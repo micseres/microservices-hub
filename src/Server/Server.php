@@ -8,6 +8,8 @@
 
 namespace Micseres\ServiceHub\Server;
 
+use Monolog\Logger;
+
 /**
  * Class Server
  * @package Micseres\ServiceHub\Server
@@ -20,15 +22,27 @@ class Server implements ServerInterface
     private $swoole;
 
     private $pools = [];
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
+     * Server constructor.
+     * @param Logger $logger
+     */
+    public function __construct(Logger $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * @param string $ip
      * @param int $port
      * @param int $mode
      * @param int $type TCP/UDP
-     * @return \Swoole\Server
      */
-    public function create(string $ip, int $port, int $mode, int $type): \Swoole\Server
+    public function create(string $ip, int $port, int $mode, int $type)
     {
         $this->swoole = new \Swoole\Server($ip, $port, $mode, $type);
     }
