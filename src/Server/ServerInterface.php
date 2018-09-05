@@ -38,8 +38,5 @@ interface ServerInterface
      */
     public function getPools(): array;
 
-    /**
-     * @param Pool $pool
-     */
-    public function addPool(Pool $pool): void;
+    public function addPool(string $ip, int $port, int $mode);
 }

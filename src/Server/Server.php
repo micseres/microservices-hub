@@ -8,7 +8,7 @@
 
 namespace Micseres\ServiceHub\Server;
 
-use Monolog\Logger;
+use Micseres\ServiceHub\App;
 
 /**
  * Class Server
@@ -22,18 +22,19 @@ class Server implements ServerInterface
     private $swoole;
 
     private $pools = [];
+
     /**
-     * @var Logger
+     * @var App
      */
-    private $logger;
+    private $app;
 
     /**
      * Server constructor.
-     * @param Logger $logger
+     * @param App $app
      */
-    public function __construct(Logger $logger)
+    public function __construct(App $app)
     {
-        $this->logger = $logger;
+        $this->app = $app;
     }
 
     /**
@@ -72,10 +73,13 @@ class Server implements ServerInterface
     }
 
     /**
-     * @param Pool $pool
+     * @param string $ip
+     * @param int $port
+     * @param int $mode
      */
-    public function addPool(Pool $pool): void
+    public function addPool(string $ip, int $port, int $mode)
     {
-        $this->pools[] = $pool;
+        $pool = new Pool($this->app);
+        $this->pools[] = $pool->create($this, $ip, $port, $mode);
     }
 }

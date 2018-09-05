@@ -7,7 +7,7 @@
  */
 
 namespace Micseres\ServiceHub\Server;
-use Monolog\Logger;
+use Micseres\ServiceHub\App;
 use \Swoole\Server as SServer;
 use \Swoole\Server\Port;
 
@@ -17,20 +17,18 @@ use \Swoole\Server\Port;
  */
 class Pool
 {
-    private $pool;
-
     /**
-     * @var Logger
+     * @var App
      */
-    private $logger;
+    private $app;
 
     /**
      * Server constructor.
-     * @param Logger $logger
+     * @param App $app
      */
-    public function __construct(Logger $logger)
+    public function __construct(App $app)
     {
-        $this->logger = $logger;
+        $this->app = $app;
     }
 
     /**
@@ -38,22 +36,17 @@ class Pool
      * @param string $ip
      * @param int $port
      * @param int $mode
+     *
+     * @return Pool
      */
     public final function create(ServerInterface $server, string $ip, int $port, int $mode)
     {
-        $this->pool = $server->getSwoole()->addListener($ip, $port, $mode);
-
+        $server->getSwoole()->addListener($ip, $port, $mode);
         $server->getSwoole()->on('connect', [$this, 'onConnect']);
         $server->getSwoole()->on('receive', [$this, 'onReceive']);
-        $server->getSwoole()->on('close', [$this, 'onReceive']);
-    }
+        $server->getSwoole()->on('close', [$this, 'onClose']);
 
-    /**
-     * @return bool|\swoole_server_port|bool
-     */
-    public function getPool()
-    {
-        return $this->pool;
+        return $this;
     }
 
     /**
@@ -63,7 +56,7 @@ class Pool
      */
     public function onConnect(SServer $server, int $fd, int $reactorId)
     {
-        $this->logger->info("SOCKET connect {$fd} to {$reactorId}", (array)$server);
+        $this->app->getLogger()->info("SOCKET connect {$fd} to {$reactorId}", (array)$server);
     }
 
     /**
@@ -74,7 +67,7 @@ class Pool
      */
     public function onReceive(SServer $server, int $fd, int $reactorId, string $data)
     {
-        $this->logger->info("SOCKET receive {$fd} connect to {$reactorId}", (array)$server);
+        $this->app->getLogger()->info("SOCKET receive {$fd} connect to {$reactorId}", (array)$server);
     }
 
     /**
@@ -84,6 +77,6 @@ class Pool
      */
     public function onClose(SServer $server, int $fd, int $reactorId)
     {
-        $this->logger->info("SOCKET close {$fd} connect to {$reactorId}", (array)$server);
+        $this->app->getLogger()->info("SOCKET close {$fd} connect to {$reactorId}", (array)$server);
     }
 }
