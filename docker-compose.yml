@@ -40,6 +40,18 @@ services:
 #    volumes:
 #    - ./test/client:/app
 
+  client3:
+    build: ./test/client
+    container_name: client3
+    image: zogxray/micro-services-client
+    networks:
+      hub:
+        ipv4_address: 10.5.0.124
+    depends_on:
+    - server
+  #    volumes:
+  #    - ./test/client:/app
+
 
   service1:
     build: ./test/service
