@@ -11,7 +11,7 @@ use \Swoole\Server as SServer;
 
 /**
  * Class ServerInterface
- * @package Micseres\ServiceHub\Server
+ * @package Micseres\ServiceHub\MicroServer
  */
 interface ServerInterface
 {
@@ -32,11 +32,4 @@ interface ServerInterface
      * @return SServer
      */
     public function getSwoole(): SServer;
-
-    /**
-     * @return array
-     */
-    public function getPools(): array;
-
-    public function addPool(string $ip, int $port, int $mode);
 }

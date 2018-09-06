@@ -15,8 +15,8 @@ use \Swoole\Server as SServer;
 use \Swoole\Server\Port;
 
 /**
- * Class Server
- * @package Micseres\ServiceHub\Server
+ * Class MicroServer
+ * @package Micseres\ServiceHub\MicroServer
  */
 class Server implements ServerInterface
 {
@@ -33,7 +33,7 @@ class Server implements ServerInterface
     private $app;
 
     /**
-     * Server constructor.
+     * MicroServer constructor.
      * @param App $app
      */
     public function __construct(App $app)
@@ -59,7 +59,7 @@ class Server implements ServerInterface
             'max_request' => 10000,
             'dispatch_mode' => 2,
             'debug_mode'=> 1,
-            'log_file' => '../logs/swoole_http_server.log'
+            'log_file' => './logs/swoole_http_server.log'
         ]);
 
         $this->swoole->on('start', [$this, 'onStart']);

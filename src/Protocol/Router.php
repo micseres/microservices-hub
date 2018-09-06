@@ -8,6 +8,8 @@
 
 namespace Micseres\ServiceHub\Protocol;
 
+use Micseres\ServiceHub\Protocol\MicroServers\MicroServer;
+
 /**
  * Class Router
  * @package Micseres\ServiceHub\Socket
@@ -17,15 +19,7 @@ final class Router
     /**
      * @var array
      */
-    private $routes = [
-        'sleep' => [
-            ['ip' => '127.0.0.1', 'port' => 7777, 'load' => 10, 'time' => '09-05-2018 10:00:00.111111'],
-            ['ip' => '127.0.0.1', 'port' => 7778, 'load' => 90, 'time' => '09-05-2018 10:00:00.111111']
-        ],
-        'report' => [
-            ['ip' => '127.0.0.1', 'port' => 8888, 'load' => 10, 'time' => '09-05-2018 10:00:00.111111']
-        ]
-    ];
+    private $routes = [];
 
     /**
      * @param string $name
