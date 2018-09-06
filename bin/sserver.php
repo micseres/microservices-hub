@@ -14,6 +14,7 @@ require __DIR__.'/../vendor/autoload.php';
 $logger = new Logger('server');
 try {
     $logger->pushHandler(new StreamHandler('./logs/server.log', Logger::DEBUG));
+    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
 } catch (Exception $e) {
 
 }
@@ -37,5 +38,27 @@ $app = new \Micseres\ServiceHub\App($configuration, $logger, $router);
 $server = new \Micseres\ServiceHub\Server\Server($app);
 
 $server->create("0.0.0.0", 9502, SWOOLE_BASE, SWOOLE_SOCK_TCP);
+
+$clientListener = $server->getSwoole()->addListener("0.0.0.0", 9503, SWOOLE_SOCK_TCP);
+
+$clientListener->set([
+    'worker_num' => 2,
+    'task_worker_num' => 2,
+    //'daemonize' => true,
+    'max_request' => 10000,
+    'dispatch_mode' => 2,
+    'debug_mode'=> 1
+]);
+
+$clientListener->on('connect', function (\Swoole\Server $server, int $fd) use ($app) {
+    $app->getLogger()->info("CLIENT SOCKET connect {$fd}");
+});
+
+
+$clientListener->on('receive', function (\Swoole\Server $server, int $fd, int $reactorId, string $data) use ($app) {
+    $app->getLogger()->info("CLIENT SOCKET receive {$fd} connect to {$reactorId}");
+    $server->send($fd, $data);
+    $app->getLogger()->info("CLIENT SOCKET send ping back");
+});
 
 $server->start();

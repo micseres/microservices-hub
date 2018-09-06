@@ -1,9 +1,9 @@
 version: '3'
 services:
 
-  hub:
+  server:
     build: ./
-    container_name: hub
+    container_name: server
     image: zogxray/micro-services-hub
     networks:
       hub:
@@ -16,15 +16,30 @@ services:
       - PING_SERVER_PORT=9504
       - REDIS_PORT=6380
 
-#  client:
-#    build: ./test/client
-#    container_name: client
-#    image: zogxray/micro-services-client
-#    networks:
-#      hub:
-#        ipv4_address: 10.5.0.112
+  client1:
+    build: ./test/client
+    container_name: client1
+    image: zogxray/micro-services-client
+    networks:
+      hub:
+        ipv4_address: 10.5.0.122
+    depends_on:
+      - server
 #    volumes:
 #    - ./test/client:/app
+
+  client2:
+    build: ./test/client
+    container_name: client2
+    image: zogxray/micro-services-client
+    networks:
+      hub:
+        ipv4_address: 10.5.0.123
+    depends_on:
+      - server
+#    volumes:
+#    - ./test/client:/app
+
 
   service1:
     build: ./test/service
@@ -33,8 +48,10 @@ services:
     networks:
       hub:
         ipv4_address: 10.5.0.116
-    volumes:
-    - ./test/service:/app
+    depends_on:
+      - server
+#    volumes:
+#    - ./test/service:/app
 
   service2:
     build: ./test/service
@@ -43,8 +60,10 @@ services:
     networks:
       hub:
         ipv4_address: 10.5.0.117
-    volumes:
-    - ./test/service:/app
+    depends_on:
+      - server
+#    volumes:
+#    - ./test/service:/app
 
 networks:
   hub:

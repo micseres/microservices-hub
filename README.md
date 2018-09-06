@@ -1,15 +1,14 @@
 # Service Dispatcher
 
-
 #### Docker
 ```console
 docker network create --gateway 10.6.0.1 --subnet 10.6.0.0/24 hub
-docker-compose up --build
+docker-compose up --build --force-recreate
 ```
 
-#### Ping interface
+### Service register in hub interface
 
-#### Service to hub ping request
+##### Service to hub ping request
 ```json
 {
   "protocol": "1.0",
@@ -17,33 +16,29 @@ docker-compose up --build
   "route": "sleep",
   "message": "Register me, I am ready",
   "payload": {
-    "route": "sleep",
     "load": "90",
     "time": "09-05-2018 10:00:00.111111"
   }
 } 
 
 ```
-```json
-{"protocol":"1.0","action":"register","route":"sleep","message":"Register me, I am ready","payload":{"route":"sleep","load":"90","time":"09-07-2018 10:00:00.111111"}}
-```
-#### Hub to service ping response
 
-##### All done
+##### Hub to service ping response
+
+All done
 
 ```json
 {
   "protocol": "1.0",
   "action": "registered",
-   "route": "sleep",
+  "route": "sleep",
   "message": "Service registered for work",
   "payload": {
     "time": "09-05-2018 10:00:00.111111"
   }
 }
 ```
-
-##### Sync and back
+Sync and back
 
 ```json
 {
@@ -57,3 +52,44 @@ docker-compose up --build
 }
 ```
 
+### From client to hub requests interface
+
+##### Call service action
+
+```json
+{
+  "protocol": "1.0",
+  "action": "task",
+  "route": "sleep",
+  "message": "Sleep",
+  "payload": {
+    "interval": "10"
+  }
+}
+```
+or 
+
+```json
+{
+  "protocol": "1.0",
+  "action": "check",
+  "route": "passport",
+  "message": "Check client passport",
+  "payload": {
+    "client_id": "client_id"
+  }
+}
+```
+or 
+
+```json
+{
+  "protocol": "1.0",
+  "action": "generate",
+  "route": "passport",
+  "message": "Generate client passport",
+  "payload": {
+    "client_id": "client_id"
+  }
+}
+```

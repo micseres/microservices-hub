@@ -27,8 +27,6 @@ class Server implements ServerInterface
      */
     private $swoole;
 
-    private $pools = [];
-
     /**
      * @var App
      */
@@ -60,8 +58,7 @@ class Server implements ServerInterface
             //'daemonize' => true,
             'max_request' => 10000,
             'dispatch_mode' => 2,
-            'debug_mode'=> 1,
-            'log_file' => './logs/swoole_http_server.log'
+            'debug_mode'=> 1
         ]);
 
         $this->swoole->on('start', [$this, 'onStart']);
@@ -106,7 +103,7 @@ class Server implements ServerInterface
                 $now = new \DateTime('now');
                 $diff = $now->getTimestamp() - $microServer->getTime()->getTimestamp();
                 if ($diff > (int)$this->app->getConfiguration()->getParameter('SERVER_LIVE_INTERVAL')) {
-                    $this->app->getLogger()->info("REMOVE EXPIRED  micro server {$microServer->getIp()} from {$route->getRoute()}", (array)$microServer);
+                    $this->app->getLogger()->info("REMOVE EXPIRED  micro server {$microServer->getIp()} from {$route->getRoute()}");
                     $route->removeServer($index);
                 }
             }
@@ -119,7 +116,7 @@ class Server implements ServerInterface
     public function onWorkerStart(SServer $server, int $interval)
     {
         $this->swoole->tick(1000,  [$this, 'onTimer'], $server);
-        $this->app->getLogger()->info("WORKER START", (array)$server);
+        $this->app->getLogger()->info("WORKER START");
     }
 
 
@@ -130,7 +127,7 @@ class Server implements ServerInterface
      */
     public function onFinish(SServer $server, int  $task_id, array $data)
     {
-        $this->app->getLogger()->info("FINISH task {$task_id}", (array)$server);
+        $this->app->getLogger()->info("FINISH task {$task_id}");
     }
 
     /**
@@ -141,7 +138,7 @@ class Server implements ServerInterface
      */
     public function onTask(SServer $server, int  $task_id, int $from_id, array $data)
     {
-        $this->app->getLogger()->info("START task {$task_id}", (array)$server);
+        $this->app->getLogger()->info("START task {$task_id}");
     }
 
     /**
@@ -149,7 +146,7 @@ class Server implements ServerInterface
      */
     public function onStart(SServer $server)
     {
-        $this->app->getLogger()->info("SERVER IS STARTED", (array)$server);
+        $this->app->getLogger()->info("SERVER IS STARTED");
     }
 
     /**
@@ -159,7 +156,7 @@ class Server implements ServerInterface
      */
     public function onConnect(SServer $server, int $fd, int $reactorId)
     {
-        $this->app->getLogger()->info("SOCKET connect {$fd} to {$reactorId}", (array)$server);
+        $this->app->getLogger()->info("SERVICE connect {$fd} to {$reactorId}");
     }
 
     /**
@@ -170,7 +167,7 @@ class Server implements ServerInterface
      */
     public function onReceive(SServer $server, int $fd, int $reactorId, string $data)
     {
-        $this->app->getLogger()->info("SOCKET receive {$fd} connect to {$reactorId}", (array)$server);
+        $this->app->getLogger()->info("SERVICE SOCKET receive {$fd} connect to {$reactorId}");
         $request = new PingRequest();
 
         $request->deserialize($data);
@@ -200,7 +197,7 @@ class Server implements ServerInterface
 
             $route = $router->getRoute($request->getRoute());
 
-            $microServiceServer = new MicroServer($remoteIp, $remotePort, $request->getPayload()['load'], new \DateTime('now'));
+            $microServiceServer = new MicroServer($remoteIp, $remotePort, $request->getPayload()['load'], $registeredAt = new \DateTime('now'));
 
             $route->addServer($microServiceServer);
             $this->app->getLogger()->info("ADD micro server {$microServiceServer->getIp()} to {$request->getRoute()}", (array)$microServiceServer);
@@ -211,7 +208,7 @@ class Server implements ServerInterface
             $response->setRoute($request->getRoute());
             $response->setMessage("Service registered for work");
             $response->setPayload([
-                'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+                'time' => $registeredAt->format('Y-m-d H:i:s.u')
             ]);
 
             $server->send($fd, json_encode($response->serialize()));
@@ -227,6 +224,6 @@ class Server implements ServerInterface
      */
     public function onClose(SServer $server, int $fd, int $reactorId)
     {
-        $this->app->getLogger()->info("SOCKET close {$fd} connect to {$reactorId}", (array)$server);
+        $this->app->getLogger()->info("SOCKET close {$fd} connect to {$reactorId}");
     }
 }
