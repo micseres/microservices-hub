@@ -13,35 +13,40 @@ try {
 
 }
 
-$client = new swoole_client(SWOOLE_SOCK_UDP);
+$client = new swoole_client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
 
-while (true) {
-    if (!$client->connect('10.5.0.111', 9503, -1)) {
-        var_dump("connect failed. Error: {$client->errCode}\n");
-    }
+$client->on("connect", function(swoole_client $cli) use ($logger) {
+    swoole_timer_tick(1000, function () use ($cli, $logger) {
+        $request = [
+            'protocol' => '1.0',
+            'action' => 'task',
+            'route' => 'sleep',
+            'message' => 'Sleep',
+            'payload' => [
+                'interval' => rand(0,99)
+            ]
+        ];
 
-    $logger->info("CREATE CONNECTION", $client->getsockname());
+        $logger->info("SENT DATA TO SERVER", $request);
 
-    $request = [
-        'protocol' => '1.0',
-        'action' => 'task',
-        'route' => 'sleep',
-        'message' => 'Sleep',
-        'payload' => [
-            'interval' => rand(0,99)
-        ]
-    ];
+        $cli->send(json_encode($request));
+    });
+});
 
-    $logger->info("SENT DATA TO SERVER", $request);
+$client->on("receive", function(swoole_client $cli, $data) use ($logger) {
+    $response = json_decode($data, true);
+    $logger->info("RECEIVE DATA FROM SERVER", $response);
+    sleep(1);
+});
 
-    $client->send(json_encode($request));
+$client->on("error", function(swoole_client $cli){
+    echo "error\n";
+});
+$client->on("close", function(swoole_client $cli){
+    echo "Connection close\n";
+});
 
-    $response = json_decode($client->recv(), true);
 
-    if (null !== $response) {
-        $logger->info("RECEIVE DATA FROM SERVER", $response);
+$client->connect('10.5.0.111', 9503);
 
-    }
-    $client->close();
-    sleep(rand(1, 45));
-}
+$logger->info("CREATE CONNECTION", $client->getsockname());
