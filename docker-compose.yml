@@ -26,13 +26,23 @@ services:
 #    volumes:
 #    - ./test/client:/app
 
-  service:
+  service1:
     build: ./test/service
-    container_name: service
+    container_name: service1
     image: zogxray/micro-services-service
     networks:
       hub:
-        ipv4_address: 10.5.0.114
+        ipv4_address: 10.5.0.116
+    volumes:
+    - ./test/service:/app
+
+  service2:
+    build: ./test/service
+    container_name: service2
+    image: zogxray/micro-services-service
+    networks:
+      hub:
+        ipv4_address: 10.5.0.117
     volumes:
     - ./test/service:/app
 

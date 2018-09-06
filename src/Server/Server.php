@@ -55,8 +55,8 @@ class Server implements ServerInterface
         $this->swoole = new \Swoole\Server($ip, $port, $mode, $type);
 
         $this->swoole->set([
-            'worker_num' => 1,
-            'task_worker_num' => 1,
+            'worker_num' => 2,
+            'task_worker_num' => 2,
             //'daemonize' => true,
             'max_request' => 10000,
             'dispatch_mode' => 2,
