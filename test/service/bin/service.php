@@ -7,6 +7,7 @@ use Monolog\Handler\StreamHandler;
 require __DIR__.'/../vendor/autoload.php';
 
 $logger = new Logger('server');
+
 try {
     $logger->pushHandler(new StreamHandler('./logs/service.log', Logger::DEBUG));
     $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
@@ -17,8 +18,6 @@ try {
 $client = new swoole_client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
 
 $client->on("connect", function(swoole_client $cli) use ($logger) {
-    echo "connect\n";
-
     $request = [
         'protocol' => '1.0',
         'action' => 'register',
@@ -35,12 +34,24 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
 });
 
 $client->on("receive", function(swoole_client $cli, $data) use ($logger) {
-    echo "receive\n";
-
     $response = json_decode($data, true);
-
     $logger->info("RECEIVE DATA FROM SERVER", $response);
 
+    swoole_timer_tick(30000, function () use ($cli, $logger) {
+        $request = [
+            'protocol' => '1.0',
+            'action' => 'register',
+            'route' => 'sleep',
+            'message' => 'Register me, I am ready for play',
+            'payload' => [
+                'load' => rand(0,99),
+                'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+            ]
+        ];
+
+        $cli->send(json_encode($request));
+        $logger->info("SENT DATA TO SERVER", $request);
+    });
     sleep(1);
 });
 
