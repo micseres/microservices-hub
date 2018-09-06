@@ -42,9 +42,9 @@ class MicroServerRoute implements MicroServerRouteInterface
     }
 
     /**
-     * @return MicroServer
+     * @return MicroServer[]
      */
-    public function getServers(): MicroServer
+    public function getServers(): array
     {
         return $this->servers;
     }
@@ -55,5 +55,13 @@ class MicroServerRoute implements MicroServerRouteInterface
     public function addServer(MicroServer $server): void
     {
         $this->servers[] = $server;
+    }
+
+    /**
+     * @param int $index
+     */
+    public function removeServer(int $index)
+    {
+        unset($this->servers[$index]);
     }
 }

@@ -14,6 +14,7 @@ docker-compose up --build
 {
   "protocol": "1.0",
   "action": "register",
+  "route": "sleep",
   "message": "Register me, I am ready",
   "payload": {
     "route": "sleep",
@@ -21,9 +22,10 @@ docker-compose up --build
     "time": "09-05-2018 10:00:00.111111"
   }
 } 
+
 ```
 ```json
-{"protocol":"1.0","action":"register","message":"Register me, I am ready","payload":{"route":"sleep","load":"90","time":"09-07-2018 10:00:00.111111"}}
+{"protocol":"1.0","action":"register","route":"sleep","message":"Register me, I am ready","payload":{"route":"sleep","load":"90","time":"09-07-2018 10:00:00.111111"}}
 ```
 #### Hub to service ping response
 
@@ -33,6 +35,7 @@ docker-compose up --build
 {
   "protocol": "1.0",
   "action": "registered",
+   "route": "sleep",
   "message": "Service registered for work",
   "payload": {
     "time": "09-05-2018 10:00:00.111111"
@@ -46,6 +49,7 @@ docker-compose up --build
 {
   "protocol": "1.0",
   "action": "sync_time",
+  "route": "sleep",
   "message": "Service need to sync time",
   "payload": {
     "time": "09-05-2018 10:00:00.111111"

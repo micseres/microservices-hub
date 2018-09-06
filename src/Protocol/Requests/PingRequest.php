@@ -24,6 +24,7 @@ final class PingRequest extends Request
         return [
             'protocol' => 'required',
             'action' => 'required',
+            'route' => 'required',
             'message' => 'required',
             'payload' => 'required',
         ];

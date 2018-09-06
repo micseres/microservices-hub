@@ -9,6 +9,7 @@
 namespace Micseres\ServiceHub\Protocol;
 
 use Micseres\ServiceHub\Protocol\MicroServers\MicroServer;
+use Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute;
 
 /**
  * Class Router
@@ -22,52 +23,20 @@ final class Router
     private $routes = [];
 
     /**
-     * @param string $name
-     * @return bool
+     * @param MicroServerRoute $route
      */
-    public function isRouteExists(string $name) :bool
+    public function addRoute(MicroServerRoute $route): void
     {
-        return isset($this->routes[$name]);
-    }
-
-    /**
-     * @param string $name
-     * @return array
-     */
-    public function getRouteSever(string $name) :array
-    {
-        usort($this->routes[$name], function ($a, $b) {
-            return $a['load'] <=> $b['load'];
-        });
-
-        return $this->routes[$name][0];
+        $this->routes[$route->getRoute()] = $route;
     }
 
     /**
      * @param string $route
-     * @param array $server
+     * @return MicroServerRoute
      */
-    public function addRouteServer(string $route, array  $server): void
+    public function getRoute(string $route): MicroServerRoute
     {
-        $this->routes[$route][] = $server;
-    }
-
-    /**
-     * @param string $route
-     * @param int $index
-     */
-    public function removeRouteServer(string $route, int $index)
-    {
-        unset($this->routes[$route][$index]);
-    }
-
-    /**
-     * @param string $name
-     * @return array
-     */
-    public function getRouteSevers(string $name) :array
-    {
-        return $this->routes[$name];
+        return $this->routes[$route];
     }
 
     /**

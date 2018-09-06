@@ -9,6 +9,8 @@
 namespace Micseres\ServiceHub\Server;
 
 use Micseres\ServiceHub\App;
+use Micseres\ServiceHub\Protocol\MicroServers\MicroServer;
+use Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute;
 use Micseres\ServiceHub\Protocol\Requests\PingRequest;
 use Micseres\ServiceHub\Protocol\Responses\Response;
 use \Swoole\Server as SServer;
@@ -100,14 +102,15 @@ class Server implements ServerInterface
 
         $router =  $this->app->getRouter();
 
-        foreach ($router->getRoutes() as $route => $servers) {
-            foreach ($servers as $index => $server) {
-                $serverLastLive = new \DateTime($server['time']);
+        /** @var MicroServerRoute $route */
+        foreach ($router->getRoutes() as $route) {
+            foreach ($route->getServers() as $index => $microServer) {
+                $serverLastLive = $microServer->getTime();
                 $now = new \DateTime('now');
                 $diff = $now->getTimestamp() - $serverLastLive->getTimestamp();
                 if ($diff > (int)$this->app->getConfiguration()->getParameter('SERVER_LIVE_INTERVAL')) {
-                    $this->app->getLogger()->info("REMOVE EXPIRED server {$server['ip']} from {$route}", $server);
-                    $router->removeRouteServer($route, $index);
+                    $this->app->getLogger()->info("REMOVE EXPIRED server {$microServer->getIp()} from {$route->getRoute()}", (array)$microServer);
+                    $route->removeServer($index);
                 }
             }
         }
@@ -181,6 +184,7 @@ class Server implements ServerInterface
             $errorResponse = new Response();
             $errorResponse->setProtocol("1.0");
             $errorResponse->setAction("error");
+            $errorResponse->setRoute($request->getRoute());
             $errorResponse->setMessage("Service not registered. Invalid request");
             $errorResponse->setPayload([
                 'constraints' => $constraints,
@@ -197,20 +201,17 @@ class Server implements ServerInterface
             $remoteIp = $server->connection_info($fd)["remote_ip"];
             $remotePort = $server->connection_info($fd)["remote_port"];
 
+            $route = $router->getRoute($request->getRoute());
 
-            $microServiceServer = [
-                'ip' => $remoteIp,
-                'port' => $remotePort,
-                'load' => $request->getPayload()['load'],
-                'time' => $request->getPayload()['time']
-            ];
+            $microServiceServer = new MicroServer($remoteIp, $remotePort, $request->getPayload()['load'], new \DateTime($request->getPayload()['time']));
 
-            $router->addRouteServer($request->getAction(), $microServiceServer);
-            $this->app->getLogger()->info("ADD server {$microServiceServer['ip']} from {$request->getAction()}", $microServiceServer);
+            $route->addServer($microServiceServer);
+            $this->app->getLogger()->info("ADD server {$microServiceServer->getIp()} from {$request->getAction()}", (array)$microServiceServer);
 
             $response = new Response();
             $response->setProtocol("1.0");
             $response->setAction("registered");
+            $response->setRoute($request->getRoute());
             $response->setMessage("Service registered for work");
             $response->setPayload([
                 'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')

@@ -30,6 +30,7 @@ $error_handler->registerErrorHandler();
 $error_handler->registerShutdownFunction();
 
 $router = new \Micseres\ServiceHub\Protocol\Router();
+$router->addRoute(new \Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute('sleep'));
 
 $app = new \Micseres\ServiceHub\App($configuration, $logger, $router);
 
