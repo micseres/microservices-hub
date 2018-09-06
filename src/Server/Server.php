@@ -100,6 +100,15 @@ class Server implements ServerInterface
         /** @var MicroServerRoute $route */
         foreach ($router->getRoutes() as $route) {
             foreach ($route->getServers() as $index => $microServer) {
+                $client = new \swoole_client(SWOOLE_SOCK_TCP);
+
+                if (!$client->connect($microServer->getIp(), $microServer->getPort(), -1)) {
+                    var_dump("connect failed. Error: {$client->errCode}\n");
+                }
+
+                $client->send(json_encode(['test' => $interval]));
+                $this->app->getLogger()->info("PING  micro server {$microServer->getIp()} from {$route->getRoute()}");
+
                 $now = new \DateTime('now');
                 $diff = $now->getTimestamp() - $microServer->getTime()->getTimestamp();
                 if ($diff > (int)$this->app->getConfiguration()->getParameter('SERVER_LIVE_INTERVAL')) {
@@ -110,12 +119,14 @@ class Server implements ServerInterface
         }
     }
 
+
     /**
      * @param SServer $server
      */
     public function onWorkerStart(SServer $server, int $interval)
     {
         $this->swoole->tick(1000,  [$this, 'onTimer'], $server);
+
         $this->app->getLogger()->info("WORKER START");
     }
 

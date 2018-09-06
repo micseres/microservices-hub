@@ -22,26 +22,30 @@ if (!$client->connect('10.5.0.111', 9502, -1)) {
 
 $logger->info("CREATE CONNECTION", $client->getsockname());
 
+$time = time();
 while (true) {
-    $request = [
-        'protocol' => '1.0',
-        'action' => 'register',
-        'route' => 'sleep',
-        'message' => 'Register me, I am ready for play',
-        'payload' => [
-            'load' => rand(0,99),
-            'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
-        ]
-    ];
+    if ((time() - $time) >= 30) {
+        $request = [
+            'protocol' => '1.0',
+            'action' => 'register',
+            'route' => 'sleep',
+            'message' => 'Register me, I am ready for play',
+            'payload' => [
+                'load' => rand(0,99),
+                'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+            ]
+        ];
 
-    $client->send(json_encode($request));
-    $logger->info("SENT DATA TO SERVER", $request);
+        $client->send(json_encode($request));
+
+        $logger->info("SENT DATA TO SERVER", $request);
+        $time = time();
+    }
 
     $response = json_decode($client->recv(), true);
 
     if (null !== $response) {
         $logger->info("RECEIVE DATA FROM SERVER", $response);
-
     }
 
     sleep(30);
