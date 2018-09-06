@@ -10,7 +10,6 @@ namespace Micseres\ServiceHub\Service;
 
 
 use Dotenv\Dotenv;
-use Micseres\ServiceHub\Exceptions\ConfigurationException;
 
 /**
  * Class Configuration
@@ -45,10 +44,6 @@ final class Configuration
      */
     public function getParameter(string $name): string
     {
-        if (false === isset($this->parameters[$name])) {
-            throw new ConfigurationException("Configuration key {$name} not exists");
-        }
-
         return $this->parameters[$name];
     }
 }

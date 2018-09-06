@@ -23,6 +23,12 @@ $dotenv->load();
 
 $configuration = new \Micseres\ServiceHub\Service\Configuration($dotenv);
 
+$client = new Raven_Client($configuration->getParameter('SENTRY'));
+$error_handler = new Raven_ErrorHandler($client);
+$error_handler->registerExceptionHandler();
+$error_handler->registerErrorHandler();
+$error_handler->registerShutdownFunction();
+
 $router = new \Micseres\ServiceHub\Protocol\Router();
 
 $app = new \Micseres\ServiceHub\App($configuration, $logger, $router);
