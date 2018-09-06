@@ -118,7 +118,7 @@ class Server implements ServerInterface
      */
     public function onWorkerStart(SServer $server, int $interval)
     {
-        $this->swoole->tick(5000,  [$this, 'onTimer'], $server);
+        $this->swoole->tick(1000,  [$this, 'onTimer'], $server);
 
         $this->app->getLogger()->info("WORKER START");
     }
@@ -203,7 +203,7 @@ class Server implements ServerInterface
 
             $microServiceServer = new MicroServer($fd, $remoteIp, $remotePort, $request->getPayload()['load'], $registeredAt = new \DateTime('now'));
 
-            $route->addServer($microServiceServer);
+            $route->addOrRefreshServer($microServiceServer);
             $this->app->getLogger()->info("ADD micro server {$microServiceServer->getIp()} to {$request->getRoute()}", (array)$microServiceServer);
 
             $response = new Response();

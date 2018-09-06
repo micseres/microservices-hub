@@ -56,6 +56,20 @@ class MicroServerRoute implements MicroServerRouteInterface
     {
         $this->servers[] = $server;
     }
+    /**
+     * @param MicroServer $server
+     */
+    public function addOrRefreshServer(MicroServer $server): void
+    {
+        /** @var MicroServer $existentServer */
+        foreach ($this->servers as $existentServer) {
+            if ($existentServer->getFd() === $server->getFd()) {
+                $existentServer->setTime(new \DateTime('now'));
+            } else {
+                $this->servers[] = $server;
+            }
+        }
+    }
 
     /**
      * @param int $index
