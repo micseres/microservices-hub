@@ -13,7 +13,7 @@ try {
 
 }
 
-$client = new swoole_client(SWOOLE_SOCK_TCP);
+$client = new swoole_client(SWOOLE_SOCK_UDP);
 
 while (true) {
     if (!$client->connect('10.5.0.111', 9503, -1)) {

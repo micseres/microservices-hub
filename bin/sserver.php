@@ -37,9 +37,9 @@ $app = new \Micseres\ServiceHub\App($configuration, $logger, $router);
 
 $server = new \Micseres\ServiceHub\Server\Server($app);
 
-$server->create("0.0.0.0", 9502, SWOOLE_BASE, SWOOLE_SOCK_TCP);
+$server->create("0.0.0.0", 9502, SWOOLE_BASE, SWOOLE_SOCK_UDP);
 
-$clientListener = $server->getSwoole()->addListener("0.0.0.0", 9503, SWOOLE_SOCK_TCP);
+$clientListener = $server->getSwoole()->addListener("0.0.0.0", 9503, SWOOLE_SOCK_UDP);
 
 $clientListener->set([
     'worker_num' => 2,

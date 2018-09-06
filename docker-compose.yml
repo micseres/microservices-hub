@@ -8,8 +8,8 @@ services:
     networks:
       hub:
         ipv4_address: 10.5.0.111
-    volumes:
-      - ./:/app
+#    volumes:
+#      - ./:/app
     environment:
       - FRONT_SERVER_PORT=9502
       - SERVICE_SERVER_PORT=9503

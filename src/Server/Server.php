@@ -96,36 +96,29 @@ class Server implements ServerInterface
 //        $this->app->getLogger()->info("TIMER TICK on {$time}", ['interval' => $interval]);
 
         $router =  $this->app->getRouter();
-
         /** @var MicroServerRoute $route */
         foreach ($router->getRoutes() as $route) {
             foreach ($route->getServers() as $index => $microServer) {
-                $client = new \swoole_client(SWOOLE_SOCK_TCP);
-
-                if (!$client->connect($microServer->getIp(), $microServer->getPort(), -1)) {
-                    var_dump("connect failed. Error: {$client->errCode}\n");
-                }
-
-                $client->send(json_encode(['test' => $interval]));
-                $this->app->getLogger()->info("PING  micro server {$microServer->getIp()} from {$route->getRoute()}");
+                $server->send($microServer->getFd(), json_encode(['test' => $interval]));
+                $this->app->getLogger()->info("PING micro server {$microServer->getIp()}:{$microServer->getPort()} from {$route->getRoute()}");
 
                 $now = new \DateTime('now');
                 $diff = $now->getTimestamp() - $microServer->getTime()->getTimestamp();
                 if ($diff > (int)$this->app->getConfiguration()->getParameter('SERVER_LIVE_INTERVAL')) {
                     $this->app->getLogger()->info("REMOVE EXPIRED  micro server {$microServer->getIp()} from {$route->getRoute()}");
                     $route->removeServer($index);
+
                 }
             }
         }
-    }
-
+}
 
     /**
      * @param SServer $server
      */
     public function onWorkerStart(SServer $server, int $interval)
     {
-        $this->swoole->tick(1000,  [$this, 'onTimer'], $server);
+        $this->swoole->tick(5000,  [$this, 'onTimer'], $server);
 
         $this->app->getLogger()->info("WORKER START");
     }
@@ -208,7 +201,7 @@ class Server implements ServerInterface
 
             $route = $router->getRoute($request->getRoute());
 
-            $microServiceServer = new MicroServer($remoteIp, $remotePort, $request->getPayload()['load'], $registeredAt = new \DateTime('now'));
+            $microServiceServer = new MicroServer($fd, $remoteIp, $remotePort, $request->getPayload()['load'], $registeredAt = new \DateTime('now'));
 
             $route->addServer($microServiceServer);
             $this->app->getLogger()->info("ADD micro server {$microServiceServer->getIp()} to {$request->getRoute()}", (array)$microServiceServer);
