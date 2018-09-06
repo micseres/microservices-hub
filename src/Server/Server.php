@@ -92,12 +92,10 @@ class Server implements ServerInterface
     /**
      * @param int $interval
      * @param SServer $server
-     *
-     * @throws \Micseres\ServiceHub\Exceptions\ConfigurationException
      */
     public function onTimer(int $interval, SServer $server)
     {
-        $time =  (new \DateTime('now'))->format('Y-m-d H:i:s.u');
+//        $time =  (new \DateTime('now'))->format('Y-m-d H:i:s.u');
 //        $this->app->getLogger()->info("TIMER TICK on {$time}", ['interval' => $interval]);
 
         $router =  $this->app->getRouter();
@@ -105,11 +103,10 @@ class Server implements ServerInterface
         /** @var MicroServerRoute $route */
         foreach ($router->getRoutes() as $route) {
             foreach ($route->getServers() as $index => $microServer) {
-                $serverLastLive = $microServer->getTime();
                 $now = new \DateTime('now');
-                $diff = $now->getTimestamp() - $serverLastLive->getTimestamp();
+                $diff = $now->getTimestamp() - $microServer->getTime()->getTimestamp();
                 if ($diff > (int)$this->app->getConfiguration()->getParameter('SERVER_LIVE_INTERVAL')) {
-                    $this->app->getLogger()->info("REMOVE EXPIRED server {$microServer->getIp()} from {$route->getRoute()}", (array)$microServer);
+                    $this->app->getLogger()->info("REMOVE EXPIRED  micro server {$microServer->getIp()} from {$route->getRoute()}", (array)$microServer);
                     $route->removeServer($index);
                 }
             }
@@ -121,7 +118,7 @@ class Server implements ServerInterface
      */
     public function onWorkerStart(SServer $server, int $interval)
     {
-        $this->swoole->tick(2000,  [$this, 'onTimer'], $server);
+        $this->swoole->tick(1000,  [$this, 'onTimer'], $server);
         $this->app->getLogger()->info("WORKER START", (array)$server);
     }
 
@@ -203,10 +200,10 @@ class Server implements ServerInterface
 
             $route = $router->getRoute($request->getRoute());
 
-            $microServiceServer = new MicroServer($remoteIp, $remotePort, $request->getPayload()['load'], new \DateTime($request->getPayload()['time']));
+            $microServiceServer = new MicroServer($remoteIp, $remotePort, $request->getPayload()['load'], new \DateTime('now'));
 
             $route->addServer($microServiceServer);
-            $this->app->getLogger()->info("ADD server {$microServiceServer->getIp()} from {$request->getAction()}", (array)$microServiceServer);
+            $this->app->getLogger()->info("ADD micro server {$microServiceServer->getIp()} to {$request->getRoute()}", (array)$microServiceServer);
 
             $response = new Response();
             $response->setProtocol("1.0");
