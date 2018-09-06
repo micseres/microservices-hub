@@ -1,7 +1,7 @@
 {
-    "name": "gepur-it/micro-services-hub",
-    "description": "Micro services hub",
-    "type": "php-server",
+    "name": "gepur-it/micro-services-client",
+    "description": "Micro services client",
+    "type": "php-client",
     "license": "MIT",
     "version": "1.0.0",
     "authors": [
@@ -35,9 +35,7 @@
         "eaglewu/swoole-ide-helper": "dev-master"
     },
     "autoload": {
-        "psr-4": {
-            "Micseres\\ServiceHub\\": "src"
-        }
+
     },
     "autoload-dev": {
 

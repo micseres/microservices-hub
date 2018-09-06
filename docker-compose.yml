@@ -4,7 +4,7 @@ services:
   hub:
     build: ./
     container_name: hub
-    image: zogxray/microservices-hub
+    image: zogxray/micro-services-hub
     networks:
       hub:
         ipv4_address: 10.5.0.111
@@ -15,6 +15,26 @@ services:
       - SERVICE_SERVER_PORT=9503
       - PING_SERVER_PORT=9504
       - REDIS_PORT=6380
+
+#  client:
+#    build: ./test/client
+#    container_name: client
+#    image: zogxray/micro-services-client
+#    networks:
+#      hub:
+#        ipv4_address: 10.5.0.112
+#    volumes:
+#    - ./test/client:/app
+
+  service:
+    build: ./test/service
+    container_name: service
+    image: zogxray/micro-services-service
+    networks:
+      hub:
+        ipv4_address: 10.5.0.114
+    volumes:
+    - ./test/service:/app
 
 networks:
   hub:
