@@ -19,11 +19,11 @@ final class Router
      */
     private $routes = [
         'sleep' => [
-            ['ip' => '127.0.0.1', 'port' => 7777, 'load' => 10],
-            ['ip' => '127.0.0.1', 'port' => 7778, 'load' => 90]
+            ['ip' => '127.0.0.1', 'port' => 7777, 'load' => 10, 'time' => '09-05-2018 10:00:00.111111'],
+            ['ip' => '127.0.0.1', 'port' => 7778, 'load' => 90, 'time' => '09-05-2018 10:00:00.111111']
         ],
         'report' => [
-            ['ip' => '127.0.0.1', 'port' => 8888, 'load' => 10]
+            ['ip' => '127.0.0.1', 'port' => 8888, 'load' => 10, 'time' => '09-05-2018 10:00:00.111111']
         ]
     ];
 
@@ -50,12 +50,38 @@ final class Router
     }
 
     /**
+     * @param string $route
+     * @param array $server
+     */
+    public function addRouteServer(string $route, array  $server): void
+    {
+        $this->routes[$route][] = $server;
+    }
+
+    /**
+     * @param string $route
+     * @param int $index
+     */
+    public function removeRouteServer(string $route, int $index)
+    {
+        unset($this->routes[$route][$index]);
+    }
+
+    /**
      * @param string $name
      * @return array
      */
     public function getRouteSevers(string $name) :array
     {
         return $this->routes[$name];
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoutes(): array
+    {
+        return $this->routes;
     }
 }
 

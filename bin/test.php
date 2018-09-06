@@ -23,11 +23,12 @@ $dotenv->load();
 
 $configuration = new \Micseres\ServiceHub\Service\Configuration($dotenv);
 
-$app = new \Micseres\ServiceHub\App($configuration, $logger);
+$router = new \Micseres\ServiceHub\Protocol\Router();
+
+$app = new \Micseres\ServiceHub\App($configuration, $logger, $router);
 
 $server = new \Micseres\ServiceHub\Server\Server($app);
 
 $server->create("0.0.0.0", 9502, SWOOLE_BASE, SWOOLE_SOCK_TCP);
-$server->addPool(9503, SWOOLE_UNIX_STREAM, SWOOLE_SOCK_TCP);
 
 $server->start();
