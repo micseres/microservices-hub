@@ -13,7 +13,7 @@ use \Swoole\Server as SServer;
 
 /**
  * Class ClientsPortListener
- * @package Micseres\ServiceHub\Server\Ports
+ * @package Micseres\ServiceHub\BaseServer\Ports
  */
 class ClientsPortListener implements PortListenerInterface
 {
@@ -52,7 +52,8 @@ class ClientsPortListener implements PortListenerInterface
     {
         $this->app->getLogger()->info("CLIENT SOCKET receive {$fd} connect to {$reactorId}");
         $server->send($fd, $data);
-        $this->app->getLogger()->info("CLIENT SOCKET send ping back");    }
+        $this->app->getLogger()->info("CLIENT SOCKET send ping back");
+    }
 
     /**
      * @param SServer $server

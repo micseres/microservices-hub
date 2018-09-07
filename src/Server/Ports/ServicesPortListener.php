@@ -10,14 +10,13 @@ namespace Micseres\ServiceHub\Server\Ports;
 
 use Micseres\ServiceHub\App;
 use Micseres\ServiceHub\Protocol\MicroServers\MicroServer;
-use Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute;
 use Micseres\ServiceHub\Protocol\Requests\PingRequest;
 use Micseres\ServiceHub\Protocol\Responses\Response;
 use \Swoole\Server as SServer;
 
 /**
  * Class ServicesPortListenerListener
- * @package Micseres\ServiceHub\Server
+ * @package Micseres\ServiceHub\BaseServer
  */
 class ServicesPortListener implements PortListenerInterface
 {
@@ -31,7 +30,6 @@ class ServicesPortListener implements PortListenerInterface
      * @param App $app
      */
     public function __construct(App $app)
-
     {
         $this->app = $app;
     }
@@ -44,6 +42,11 @@ class ServicesPortListener implements PortListenerInterface
     public function onConnect(SServer $server, int $fd, int $reactorId)
     {
         $this->app->getLogger()->info("SERVICE connect {$fd} to {$reactorId}");
+
+        swoole_timer_tick(2000, function () use ($server, $fd) {
+            $server->send($fd, json_encode(['test' => 'test']));
+            $this->app->getLogger()->info("PING micro server");
+        });
     }
 
     /**
@@ -83,10 +86,9 @@ class ServicesPortListener implements PortListenerInterface
             $remotePort = $server->connection_info($fd)["remote_port"];
 
             $route = $router->getRoute($request->getRoute());
-
-            $microServiceServer = new MicroServer($fd, $remoteIp, $remotePort, $request->getPayload()['load'], $registeredAt = new \DateTime('now'));
-
+            $microServiceServer = new MicroServer($fd, $reactorId, $remoteIp, $remotePort, $request->getPayload()['load'], $registeredAt = new \DateTime('now'));
             $route->addOrRefreshServer($microServiceServer);
+
             $this->app->getLogger()->info("ADD micro server {$microServiceServer->getIp()} to {$request->getRoute()}", (array)$microServiceServer);
 
             $response = new Response();

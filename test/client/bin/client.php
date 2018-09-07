@@ -39,11 +39,13 @@ $client->on("receive", function(swoole_client $cli, $data) use ($logger) {
     sleep(1);
 });
 
-$client->on("error", function(swoole_client $cli){
-    echo "error\n";
+
+$client->on("error", function(swoole_client $cli) use ($logger) {
+    $logger->info("SOCKET ERROR");
 });
-$client->on("close", function(swoole_client $cli){
-    echo "Connection close\n";
+
+$client->on("close", function(swoole_client $cli)  use ($logger) {
+    $logger->info("SOCKET CONNECTION CLOSE");
 });
 
 

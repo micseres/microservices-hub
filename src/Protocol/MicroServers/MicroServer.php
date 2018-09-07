@@ -31,18 +31,24 @@ class MicroServer
      * @var int
      */
     private $fd;
+    /**
+     * @var int
+     */
+    private $reactorId;
 
     /**
      * MicroServer constructor.
      * @param int $fd
+     * @param int $reactorId
      * @param string $ip
      * @param int $port
      * @param int $load
      * @param \DateTime $time
      */
-    public function __construct(int $fd, string $ip, int $port, int $load, \DateTime $time)
+    public function __construct(int $fd, int $reactorId, string $ip, int $port, int $load, \DateTime $time)
     {
         $this->fd = $fd;
+        $this->reactorId = $reactorId;
         $this->ip = $ip;
         $this->port = $port;
         $this->load = $load;
@@ -55,6 +61,22 @@ class MicroServer
     public function getFd(): int
     {
         return $this->fd;
+    }
+
+    /**
+     * @return int
+     */
+    public function getReactorId(): int
+    {
+        return $this->reactorId;
+    }
+
+    /**
+     * @param int $reactorId
+     */
+    public function setReactorId(int $reactorId): void
+    {
+        $this->reactorId = $reactorId;
     }
 
     /**

@@ -20,7 +20,7 @@ class MicroServerRoute implements MicroServerRouteInterface
     private $route;
 
     /**
-     * @var MicroServer
+     * @var MicroServer[]
      */
     private $servers = [];
 
@@ -62,12 +62,17 @@ class MicroServerRoute implements MicroServerRouteInterface
     public function addOrRefreshServer(MicroServer $server): void
     {
         /** @var MicroServer $existentServer */
-        foreach ($this->servers as $existentServer) {
-            if ($existentServer->getFd() === $server->getFd()) {
-                $existentServer->setTime(new \DateTime('now'));
-            } else {
-                $this->servers[] = $server;
+        if (count($this->servers)) {
+            foreach ($this->servers as $existentServer) {
+                if ($existentServer->getFd() === $server->getFd()) {
+                    $existentServer->setTime(new \DateTime('now'));
+                } else {
+                    $this->servers[] = $server;
+                }
             }
+        } else {
+            $this->servers[] = $server;
+
         }
     }
 

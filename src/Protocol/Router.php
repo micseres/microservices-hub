@@ -40,7 +40,7 @@ final class Router
     }
 
     /**
-     * @return array
+     * @return MicroServerRoute[]
      */
     public function getRoutes(): array
     {

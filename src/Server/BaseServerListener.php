@@ -13,8 +13,8 @@ use Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute;
 use \Swoole\Server as SServer;
 
 /**
- * Class CliPortListener
- * @package Micseres\ServiceHub\Server
+ * Class BASEPortListener
+ * @package Micseres\ServiceHub\BaseServer
  */
 class BaseServerListener
 {
@@ -38,19 +38,23 @@ class BaseServerListener
     public function onTimer(int $interval, SServer $server)
     {
         $time =  (new \DateTime('now'))->format('Y-m-d H:i:s.u');
-        $this->app->getLogger()->info("CLI TIMER TICK on {$time}", ['interval' => $interval]);
+        $this->app->getLogger()->info("BASE TIMER TICK on {$time}", ['interval' => $interval]);
 
-        $router =  $this->app->getRouter();
+        $router = $this->app->getRouter();
         /** @var MicroServerRoute $route */
         foreach ($router->getRoutes() as $route) {
             foreach ($route->getServers() as $index => $microServer) {
-                $server->send($microServer->getFd(), json_encode(['test' => $interval]));
-                $this->app->getLogger()->info("PING micro server {$microServer->getIp()}:{$microServer->getPort()} from {$route->getRoute()}");
+                $result = $server->send($microServer->getFd(), json_encode(['test' => 'test']), $microServer->getReactorId());
+                if (true === $result) {
+                    $this->app->getLogger()->info("BASE PING micro server");
+                } else {
+                    $this->app->getLogger()->info("BASE PING micro server failed");
+                }
 
                 $now = new \DateTime('now');
                 $diff = $now->getTimestamp() - $microServer->getTime()->getTimestamp();
                 if ($diff > (int)$this->app->getConfiguration()->getParameter('SERVER_LIVE_INTERVAL')) {
-                    $this->app->getLogger()->info("REMOVE EXPIRED  micro server {$microServer->getIp()} from {$route->getRoute()}");
+                    $this->app->getLogger()->info("REMOVE EXPIRED micro server {$microServer->getIp()} from {$route->getRoute()}");
                     $route->removeServer($index);
 
                 }
@@ -60,12 +64,12 @@ class BaseServerListener
 
     /**
      * @param SServer $server
+     * @param int $worker_id
      */
-    public function onWorkerStart(SServer $server, int $interval)
+    public function onWorkerStart(SServer $server, int $worker_id)
     {
-        $server->tick(10000,  [$this, 'onTimer'], $server);
-
-        $this->app->getLogger()->info("CLI WORKER START");
+        $server->tick(1000,  [$this, 'onTimer'], $server);
+        $this->app->getLogger()->info("WORKER START");
     }
 
 
@@ -76,7 +80,7 @@ class BaseServerListener
      */
     public function onFinish(SServer $server, int  $task_id, array $data)
     {
-        $this->app->getLogger()->info("CLI FINISH task {$task_id}");
+        $this->app->getLogger()->info("BASE FINISH task {$task_id}");
     }
 
     /**
@@ -87,7 +91,7 @@ class BaseServerListener
      */
     public function onTask(SServer $server, int  $task_id, int $from_id, array $data)
     {
-        $this->app->getLogger()->info("CLI START task {$task_id}");
+        $this->app->getLogger()->info("BASE START task {$task_id}");
     }
 
     /**
@@ -95,7 +99,7 @@ class BaseServerListener
      */
     public function onStart(SServer $server)
     {
-        $this->app->getLogger()->info("CLI SERVER IS STARTED");
+        $this->app->getLogger()->info("BASE SERVER IS STARTED");
     }
 
     /**
@@ -105,7 +109,7 @@ class BaseServerListener
      */
     public function onConnect(SServer $server, int $fd, int $reactorId)
     {
-        $this->app->getLogger()->info("CLI connect {$fd} to {$reactorId}");
+        $this->app->getLogger()->info("BASE connect {$fd} to {$reactorId}");
     }
 
     /**
@@ -116,7 +120,7 @@ class BaseServerListener
      */
     public function onReceive(SServer $server, int $fd, int $reactorId, string $data)
     {
-        $this->app->getLogger()->info("CLI SOCKET receive {$fd} connect to {$reactorId}");
+        $this->app->getLogger()->info("BASE SOCKET receive {$fd} connect to {$reactorId}");
     }
 
     /**
@@ -126,6 +130,6 @@ class BaseServerListener
      */
     public function onClose(SServer $server, int $fd, int $reactorId)
     {
-        $this->app->getLogger()->info("CLI SOCKET close {$fd} connect to {$reactorId}");
+        $this->app->getLogger()->info("BASE SOCKET close {$fd} connect to {$reactorId}");
     }
 }

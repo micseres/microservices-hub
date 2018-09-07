@@ -13,7 +13,7 @@ use \Swoole\Server\Port;
 
 /**
  * Interface PortListenerInterface
- * @package Micseres\ServiceHub\Server
+ * @package Micseres\ServiceHub\BaseServer
  */
 interface PortListenerInterface
 {

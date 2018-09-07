@@ -33,13 +33,14 @@ $error_handler->registerErrorHandler();
 $error_handler->registerShutdownFunction();
 
 $router = new \Micseres\ServiceHub\Protocol\Router();
+
 $router->addRoute(new \Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute('sleep'));
 
 $app = new \Micseres\ServiceHub\App($configuration, $logger, $router);
 
-$server = new \Micseres\ServiceHub\Server\Server($app);
+$server = new \Micseres\ServiceHub\Server\BaseServer($app);
 
-$serverEvents = \Micseres\ServiceHub\Server\Server::SERVER_EVENTS;
+$serverEvents = \Micseres\ServiceHub\Server\BaseServer::SERVER_EVENTS;
 
 $setting = [
     'worker_num' => 1,

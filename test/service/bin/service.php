@@ -31,11 +31,6 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
 
     $cli->send(json_encode($request));
     $logger->info("SENT DATA TO SERVER", $request);
-});
-
-$client->on("receive", function(swoole_client $cli, $data) use ($logger) {
-    $response = json_decode($data, true);
-    $logger->info("RECEIVE DATA FROM SERVER", $response);
 
     swoole_timer_tick(30000, function () use ($cli, $logger) {
         $request = [
@@ -52,14 +47,21 @@ $client->on("receive", function(swoole_client $cli, $data) use ($logger) {
         $cli->send(json_encode($request));
         $logger->info("SENT DATA TO SERVER", $request);
     });
-    sleep(1);
 });
 
-$client->on("error", function(swoole_client $cli){
-    echo "error\n";
+$client->on("receive", function(swoole_client $cli, $data) use ($logger) {
+    $request = json_decode($data, true);
+    $logger->info("RECEIVE DATA FROM SERVER", $request);
+
+    usleep(1000);
 });
-$client->on("close", function(swoole_client $cli){
-    echo "Connection close\n";
+
+$client->on("error", function(swoole_client $cli) use ($logger) {
+    $logger->info("SOCKET ERROR");
+});
+
+$client->on("close", function(swoole_client $cli)  use ($logger) {
+    $logger->info("SOCKET CONNECTION CLOSE");
 });
 
 

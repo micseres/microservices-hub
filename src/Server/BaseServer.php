@@ -16,7 +16,7 @@ use \Swoole\Server as SServer;
  * Class MicroServer
  * @package Micseres\ServiceHub\MicroServer
  */
-final class Server
+final class BaseServer
 {
     const SERVER_EVENTS = [
         'start',
@@ -32,11 +32,6 @@ final class Server
      * @var SServer $swoole
      */
     private $swoole;
-
-    /**
-     * @var string
-     */
-    private $cliSocket = 'var/cli.sock';
 
     /**
      * @var App
@@ -58,7 +53,7 @@ final class Server
      */
     public function createBaseServer(array $events, array $setting = [])
     {
-        $this->swoole = new \Swoole\Server($this->cliSocket, 0, SWOOLE_BASE, SWOOLE_UNIX_STREAM);
+        $this->swoole = new \Swoole\Server("0.0.0.0", 9501, SWOOLE_BASE, SWOOLE_SOCK_UDP);
 
         $this->swoole->set($setting);
 
