@@ -52,7 +52,7 @@ class MicroServerRoute implements MicroServerRouteInterface
     /**
      * @return MicroServer
      */
-    public function getServer(): MicroServer
+    public function getServer(): ?MicroServer
     {
         usort($this->servers, function ($a, $b) {
             return $a->getLoad() <=> $b->getLoad();

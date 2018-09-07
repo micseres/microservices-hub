@@ -55,8 +55,11 @@ class BaseServerListener implements BaseServerListenerInterface
     public function workWithClientRequestQuery(int $interval, SServer $server)
     {
         $task = $this->app->getClientRequestQuery()->get();
-        $server->send($task->getServer()->getFd(), json_encode((array)$task->getRequest()), $task->getServer()->getReactorId());
-        $this->app->getLogger()->info("BASE SEND REQUEST TO SERVICE", (array)$task->getRequest());
+
+        if (null !== $task) {
+            $server->send($task->getServer()->getFd(), json_encode((array)$task->getRequest()), $task->getServer()->getReactorId());
+            $this->app->getLogger()->info("BASE SEND REQUEST TO SERVICE", (array)$task->getRequest());
+        }
     }
 
     /**
@@ -88,7 +91,7 @@ class BaseServerListener implements BaseServerListenerInterface
      * @param int $task_id
      * @param array $data
      */
-    public function onFinish(SServer $server, int  $task_id, array $data)
+    public function onFinish(SServer $server, int  $task_id, $data)
     {
         $this->app->getLogger()->info("BASE FINISH task {$task_id}");
     }
@@ -99,7 +102,7 @@ class BaseServerListener implements BaseServerListenerInterface
      * @param int $from_id
      * @param array $data
      */
-    public function onTask(SServer $server, int  $task_id, int $from_id, array $data)
+    public function onTask(SServer $server, int  $task_id, int $from_id, $data)
     {
         $this->app->getLogger()->info("BASE START task {$task_id}");
     }
