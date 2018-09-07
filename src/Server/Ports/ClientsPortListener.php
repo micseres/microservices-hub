@@ -9,6 +9,8 @@
 namespace Micseres\ServiceHub\Server\Ports;
 
 use Micseres\ServiceHub\App;
+use Micseres\ServiceHub\Protocol\Requests\ClientRequest;
+use Micseres\ServiceHub\Protocol\Responses\Response;
 use \Swoole\Server as SServer;
 
 /**
@@ -39,7 +41,7 @@ class ClientsPortListener implements PortListenerInterface
      */
     public function onConnect(SServer $server, int $fd, int $reactorId)
     {
-        $this->app->getLogger()->info("CLIENT connect {$fd} to {$reactorId}");
+        $this->app->getLogger()->info("CLIENT SOCKET connect {$fd} to {$reactorId}");
     }
 
     /**
@@ -50,9 +52,33 @@ class ClientsPortListener implements PortListenerInterface
      */
     public function onReceive(SServer $server, int $fd, int $reactorId, string $data)
     {
-        $this->app->getLogger()->info("CLIENT SOCKET receive {$fd} connect to {$reactorId}");
-        $server->send($fd, $data);
-        $this->app->getLogger()->info("CLIENT SOCKET send ping back");
+        $this->app->getLogger()->info("CLIENT SOCKET from {$fd} receive data to {$reactorId}");
+
+        $request = new ClientRequest();
+
+        $request->deserialize($data);
+
+        $constraints = $request->validate();
+
+        if (null !== $constraints) {
+            $errorResponse = new Response();
+            $errorResponse->setProtocol("1.0");
+            $errorResponse->setAction("error");
+            $errorResponse->setRoute($request->getRoute());
+            $errorResponse->setMessage("Invalid request");
+            $errorResponse->setPayload([
+                'constraints' => $constraints,
+                'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+            ]);
+
+            $server->send($fd, json_encode($errorResponse->serialize()));
+
+            $this->app->getLogger()->info("CLIENT SOCKET send ERROR RESPONSE to {$fd} from {$reactorId}", (array)$errorResponse);
+        } else {
+
+            $server->send($fd, $data);
+        }
+
     }
 
     /**

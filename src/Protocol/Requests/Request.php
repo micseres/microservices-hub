@@ -110,7 +110,7 @@ class Request
      */
     public function deserialize(string $json) :?self
     {
-        $data = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $json), true );
+        $data = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $json), true );
 
         if (null === $data) {
             return null;

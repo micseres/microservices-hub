@@ -16,7 +16,7 @@ use \Swoole\Server as SServer;
  * Class BASEPortListener
  * @package Micseres\ServiceHub\BaseServer
  */
-class BaseServerListener
+class BaseServerListener implements BaseServerListenerInterface
 {
     /**
      * @var App
@@ -68,10 +68,18 @@ class BaseServerListener
      */
     public function onWorkerStart(SServer $server, int $worker_id)
     {
-        $server->tick(1000,  [$this, 'onTimer'], $server);
-        $this->app->getLogger()->info("WORKER START");
+        if ($worker_id === 0) {
+            $server->tick(1000,  [$this, 'onTimer'], $server);
+            $this->app->getLogger()->info("WORKER {$worker_id} TIMER 1000 START");
+        }
+
+        $this->app->getLogger()->info("WORKER {$worker_id} START");
     }
 
+    function onWorkerStop(SServer $server, int $worker_id)
+    {
+        $this->app->getLogger()->info("WORKER {$worker_id} STOP");
+    }
 
     /**
      * @param SServer $server
@@ -100,6 +108,15 @@ class BaseServerListener
     public function onStart(SServer $server)
     {
         $this->app->getLogger()->info("BASE SERVER IS STARTED");
+    }
+
+    /**
+     * @param SServer $server
+     * @return mixed|void
+     */
+    public function onShutdown(SServer $server)
+    {
+        $this->app->getLogger()->info("BASE SERVER IS SHUTDOWN");
     }
 
     /**

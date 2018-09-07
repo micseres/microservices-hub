@@ -11,10 +11,10 @@ namespace Micseres\ServiceHub\Protocol\Requests;
 use ReflectionClass;
 
 /**
- * Class PingRequest
+ * Class ServiceRequest
  * @package Micseres\ServiceHub\Protocol\Requests
  */
-final class PingRequest extends Request
+final class ServiceRequest extends Request
 {
     /**
      * @return array
@@ -43,8 +43,7 @@ final class PingRequest extends Request
             }
         }
 
-        if (count($messages) > 0)
-        {
+        if (count($messages) > 0) {
             return $messages;
         }
 

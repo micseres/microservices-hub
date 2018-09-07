@@ -61,18 +61,22 @@ class MicroServerRoute implements MicroServerRouteInterface
      */
     public function addOrRefreshServer(MicroServer $server): void
     {
+
+        $updateServer = null;
+
         /** @var MicroServer $existentServer */
         if (count($this->servers)) {
             foreach ($this->servers as $existentServer) {
-                if ($existentServer->getFd() === $server->getFd()) {
-                    $existentServer->setTime(new \DateTime('now'));
-                } else {
-                    $this->servers[] = $server;
+                if (($existentServer->getFd() === $server->getFd()) && ($existentServer->getReactorId() === $server->getReactorId())) {
+                    $updateServer = $existentServer;
                 }
+            }
+
+            if (null !== $updateServer) {
+                $updateServer->setTime(new \DateTime('now'));
             }
         } else {
             $this->servers[] = $server;
-
         }
     }
 
