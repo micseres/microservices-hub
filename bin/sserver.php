@@ -12,9 +12,11 @@ use Monolog\Handler\StreamHandler;
 require __DIR__.'/../vendor/autoload.php';
 
 $logger = new Logger('server');
+
 try {
-    $logger->pushHandler(new StreamHandler('./logs/server.log', Logger::DEBUG));
+    $logger->pushHandler(new StreamHandler('./var/logs/server.log', Logger::DEBUG));
     $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
+
 } catch (Exception $e) {
 
 }
@@ -37,28 +39,37 @@ $app = new \Micseres\ServiceHub\App($configuration, $logger, $router);
 
 $server = new \Micseres\ServiceHub\Server\Server($app);
 
-$server->create("0.0.0.0", 9502, SWOOLE_BASE, SWOOLE_SOCK_UDP);
+$serverEvents = \Micseres\ServiceHub\Server\Server::SERVER_EVENTS;
 
-$clientListener = $server->getSwoole()->addListener("0.0.0.0", 9503, SWOOLE_SOCK_UDP);
-
-$clientListener->set([
-    'worker_num' => 2,
-    'task_worker_num' => 2,
+$setting = [
+    'worker_num' => 1,
+    'task_worker_num' => 16,
     //'daemonize' => true,
     'max_request' => 10000,
     'dispatch_mode' => 2,
     'debug_mode'=> 1
-]);
+];
 
-$clientListener->on('connect', function (\Swoole\Server $server, int $fd) use ($app) {
-    $app->getLogger()->info("CLIENT SOCKET connect {$fd}");
-});
+$server->createBaseServer($serverEvents, $setting);
+
+$serviceListenerSetting = [
+//    'ssl_cert_file' => 'ssl.cert',
+//    'ssl_key_file' => 'ssl.key',
+];
+
+$portEvents = \Micseres\ServiceHub\Server\Ports\PortListenerInterface::DEFAULT_EVENTS;
+
+$serviceListener = new \Micseres\ServiceHub\Server\Ports\ServicesPortListener($app);
+$server->addListener($serviceListener, $portEvents, "0.0.0.0", 9502, SWOOLE_SOCK_UDP, $serviceListenerSetting);
 
 
-$clientListener->on('receive', function (\Swoole\Server $server, int $fd, int $reactorId, string $data) use ($app) {
-    $app->getLogger()->info("CLIENT SOCKET receive {$fd} connect to {$reactorId}");
-    $server->send($fd, $data);
-    $app->getLogger()->info("CLIENT SOCKET send ping back");
-});
+$clientListenerSetting = [
+//    'ssl_cert_file' => 'ssl.cert',
+//    'ssl_key_file' => 'ssl.key',
+];
+
+$clientListener = new \Micseres\ServiceHub\Server\Ports\ClientsPortListener($app);
+$server->addListener($clientListener, $portEvents, "0.0.0.0", 9503, SWOOLE_SOCK_UDP, $clientListenerSetting);
+
 
 $server->start();
