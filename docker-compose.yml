@@ -77,6 +77,18 @@ services:
 #    volumes:
 #    - ./test/service:/app
 
+  service3:
+    build: ./test/service
+    container_name: service3
+    image: zogxray/micro-services-service
+    networks:
+      hub:
+        ipv4_address: 10.5.0.118
+    depends_on:
+    - server
+#    volumes:
+#    - ./test/service:/app
+
 networks:
   hub:
     external: true

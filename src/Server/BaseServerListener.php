@@ -41,6 +41,8 @@ class BaseServerListener implements BaseServerListenerInterface
         /** @var MicroServerRoute $route */
         foreach ($router->getRoutes() as $route) {
             foreach ($route->getServers() as $index => $microServer) {
+                $server->send($microServer->getFd(), json_encode(['test' => 'test']), $microServer->getReactorId());
+
                 $now = new \DateTime('now');
                 $diff = $now->getTimestamp() - $microServer->getTime()->getTimestamp();
                 if ($diff > (int)$this->app->getConfiguration()->getParameter('SERVER_LIVE_INTERVAL')) {
