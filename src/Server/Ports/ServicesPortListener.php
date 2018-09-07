@@ -42,11 +42,6 @@ class ServicesPortListener implements PortListenerInterface
     public function onConnect(SServer $server, int $fd, int $reactorId)
     {
         $this->app->getLogger()->info("SERVICE SOCKET connect {$fd} to {$reactorId}");
-
-        swoole_timer_tick(2000, function () use ($server, $fd) {
-            $server->send($fd, json_encode(['test' => 'test']));
-            $this->app->getLogger()->info("PING micro server");
-        });
     }
 
     /**

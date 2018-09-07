@@ -78,17 +78,14 @@ class MicroServerRoute implements MicroServerRouteInterface
         /** @var MicroServer $existentServer */
         if (count($this->servers)) {
             foreach ($this->servers as $existentServer) {
-                if (($existentServer->getFd() === $server->getFd()) && ($existentServer->getReactorId() === $server->getReactorId())) {
-                    $updateServer = $existentServer;
+                if (($existentServer->getIp() === $server->getIp()) && ($existentServer->getPort() === $server->getPort())) {
+                    $existentServer->setTime(new \DateTime('now'));
+                    return;
                 }
             }
-
-            if (null !== $updateServer) {
-                $updateServer->setTime(new \DateTime('now'));
-            }
-        } else {
-            $this->servers[] = $server;
         }
+
+        $this->servers[] = $server;
     }
 
     /**
