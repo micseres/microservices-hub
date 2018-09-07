@@ -12,7 +12,7 @@ namespace Micseres\ServiceHub\Protocol\Requests;
  * Class Request
  * @package Micseres\ServiceHub\Protocol\Requests
  */
-class Request
+class Request implements RequestInterface
 {
     private $protocol;
 

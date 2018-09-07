@@ -36,7 +36,9 @@ $router = new \Micseres\ServiceHub\Protocol\Router();
 
 $router->addRoute(new \Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute('sleep'));
 
-$app = new \Micseres\ServiceHub\App($configuration, $logger, $router);
+$clientRequestQuery = new \Micseres\ServiceHub\Server\Exchange\ClientRequestQuery();
+
+$app = new \Micseres\ServiceHub\App($configuration, $logger, $router, $clientRequestQuery);
 
 $server = new \Micseres\ServiceHub\Server\BaseServer($app);
 
@@ -68,6 +70,7 @@ $clientListenerSetting = [
 //    'ssl_cert_file' => 'ssl.cert',
 //    'ssl_key_file' => 'ssl.key',
 ];
+
 
 $clientListener = new \Micseres\ServiceHub\Server\Ports\ClientsPortListener($app);
 $server->addListener($clientListener, $portEvents, "0.0.0.0", 9503, SWOOLE_SOCK_UDP, $clientListenerSetting);

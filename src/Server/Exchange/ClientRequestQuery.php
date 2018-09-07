@@ -28,7 +28,7 @@ class ClientRequestQuery
             return null;
         }
 
-        return $this->items[0];
+        return array_shift($this->items);
     }
 
     /**

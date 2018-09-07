@@ -9,8 +9,10 @@
 namespace Micseres\ServiceHub\Server\Ports;
 
 use Micseres\ServiceHub\App;
+use Micseres\ServiceHub\Protocol\Client\Client;
 use Micseres\ServiceHub\Protocol\Requests\ClientRequest;
 use Micseres\ServiceHub\Protocol\Responses\Response;
+use Micseres\ServiceHub\Server\Exchange\RequestQueryItem;
 use \Swoole\Server as SServer;
 
 /**
@@ -75,8 +77,27 @@ class ClientsPortListener implements PortListenerInterface
 
             $this->app->getLogger()->info("CLIENT SOCKET send ERROR RESPONSE to {$fd} from {$reactorId}", (array)$errorResponse);
         } else {
+            $router = $this->app->getRouter();
+            $serviceRoute = $router->getRoute($request->getRoute());
 
-            $server->send($fd, $data);
+            $service = $serviceRoute->getServer();
+
+            $client = new Client($fd, $reactorId);
+
+            $requestQueryItem = new RequestQueryItem($request, $service, $client);
+            $query = $this->app->getClientRequestQuery();
+            $query->push($requestQueryItem);
+
+            $response = new Response();
+            $response->setProtocol("1.0");
+            $response->setAction("accepted");
+            $response->setRoute($request->getRoute());
+            $response->setMessage("Request accepted");
+            $response->setPayload([
+                'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+            ]);
+
+            $server->send($fd, json_encode($response->serialize()));
         }
 
     }

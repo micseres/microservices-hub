@@ -35,31 +35,28 @@ class BaseServerListener implements BaseServerListenerInterface
      * @param int $interval
      * @param SServer $server
      */
-    public function onTimer(int $interval, SServer $server)
+    public function checkExpiredRouter(int $interval, SServer $server)
     {
-        $time =  (new \DateTime('now'))->format('Y-m-d H:i:s.u');
-        $this->app->getLogger()->info("BASE TIMER TICK on {$time}", ['interval' => $interval]);
-
         $router = $this->app->getRouter();
         /** @var MicroServerRoute $route */
         foreach ($router->getRoutes() as $route) {
             foreach ($route->getServers() as $index => $microServer) {
-                $result = $server->send($microServer->getFd(), json_encode(['test' => 'test']), $microServer->getReactorId());
-                if (true === $result) {
-                    $this->app->getLogger()->info("BASE PING micro server");
-                } else {
-                    $this->app->getLogger()->info("BASE PING micro server failed");
-                }
-
                 $now = new \DateTime('now');
                 $diff = $now->getTimestamp() - $microServer->getTime()->getTimestamp();
                 if ($diff > (int)$this->app->getConfiguration()->getParameter('SERVER_LIVE_INTERVAL')) {
-                    $this->app->getLogger()->info("REMOVE EXPIRED micro server {$microServer->getIp()} from {$route->getRoute()}");
+                    $this->app->getLogger()->info("BASE REMOVE EXPIRED micro server {$microServer->getIp()} from {$route->getRoute()}");
                     $route->removeServer($index);
 
                 }
             }
         }
+    }
+
+    public function workWithClientRequestQuery(int $interval, SServer $server)
+    {
+        $task = $this->app->getClientRequestQuery()->get();
+        $server->send($task->getServer()->getFd(), json_encode((array)$task->getRequest()), $task->getServer()->getReactorId());
+        $this->app->getLogger()->info("BASE SEND REQUEST TO SERVICE", (array)$task->getRequest());
     }
 
     /**
@@ -69,16 +66,21 @@ class BaseServerListener implements BaseServerListenerInterface
     public function onWorkerStart(SServer $server, int $worker_id)
     {
         if ($worker_id === 0) {
-            $server->tick(1000,  [$this, 'onTimer'], $server);
-            $this->app->getLogger()->info("WORKER {$worker_id} TIMER 1000 START");
+            $time = 1000;
+            $server->tick($time,  [$this, 'checkExpiredRouter'], $server);
+            $this->app->getLogger()->info("BASE WORKER {$worker_id} TIMER {$time} FOR ROUTES START");
         }
 
-        $this->app->getLogger()->info("WORKER {$worker_id} START");
+        $time = 1000;
+        $server->tick($time,  [$this, 'workWithClientRequestQuery'], $server);
+        $this->app->getLogger()->info("BASE WORKER {$worker_id} TIMER {$time} FOR ROUTES START");
+
+        $this->app->getLogger()->info("BASE WORKER {$worker_id} START");
     }
 
     function onWorkerStop(SServer $server, int $worker_id)
     {
-        $this->app->getLogger()->info("WORKER {$worker_id} STOP");
+        $this->app->getLogger()->info("BASE WORKER {$worker_id} STOP");
     }
 
     /**
