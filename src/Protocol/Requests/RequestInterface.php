@@ -14,5 +14,14 @@ namespace Micseres\ServiceHub\Protocol\Requests;
  */
 interface RequestInterface
 {
+    /**
+     * @param string $json
+     * @return RequestInterface|null
+     */
+    public function deserialize(string $json) :?RequestInterface;
 
+    /**
+     * @return array
+     */
+    public function serialize(): array;
 }

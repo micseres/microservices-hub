@@ -5,16 +5,19 @@ services:
     build: ./
     container_name: server
     image: zogxray/micro-services-hub
+    environment:
+     - SERVER_LIVE_INTERVAL=30
+     - CLIENT_SERVER_ADDR=0.0.0.0
+     - CLIENT_SERVER_PORT=9503
+     - SERVICE_SERVER_ADDR=0.0.0.0
+     - SERVICE_SERVER_PORT=9502
+     - BASE_SERVER_ADDR=0.0.0.0
+     - BASE_SERVER_PORT=9501
     networks:
       hub:
         ipv4_address: 10.5.0.111
 #    volumes:
 #      - ./:/app
-    environment:
-      - FRONT_SERVER_PORT=9502
-      - SERVICE_SERVER_PORT=9503
-      - PING_SERVER_PORT=9504
-      - REDIS_PORT=6380
 
   client1:
     build: ./test/client
@@ -51,7 +54,6 @@ services:
     - server
   #    volumes:
   #    - ./test/client:/app
-
 
   service1:
     build: ./test/service

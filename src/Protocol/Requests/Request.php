@@ -8,6 +8,8 @@
 
 namespace Micseres\ServiceHub\Protocol\Requests;
 
+use ReflectionClass;
+
 /**
  * Class Request
  * @package Micseres\ServiceHub\Protocol\Requests
@@ -106,9 +108,9 @@ class Request implements RequestInterface
 
     /**
      * @param string $json
-     * @return null|Request
+     * @return null|RequestInterface
      */
-    public function deserialize(string $json) :?self
+    public function deserialize(string $json) :?RequestInterface
     {
         $data = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $json), true );
 
@@ -123,5 +125,25 @@ class Request implements RequestInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function serialize(): array
+    {
+        $json = [];
+
+        try {
+            $class = new ReflectionClass($this);
+        } catch (\ReflectionException $e) {
+        }
+
+        foreach ($class->getProperties() as $key => $value) {
+            $value->setAccessible(true);
+            $json[$value->getName()] = $value->getValue($this);
+        }
+
+        return $json;
     }
 }

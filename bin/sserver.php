@@ -8,62 +8,77 @@
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Handler\RavenHandler;
+use Micseres\ServiceHub\Protocol\Router;
+use Micseres\ServiceHub\App;
+use Micseres\ServiceHub\Server\BaseServer;
+use Micseres\ServiceHub\Server\Ports\PortListenerInterface;
+use Micseres\ServiceHub\Server\Ports\UDPServicesPortListener;
+use Micseres\ServiceHub\Server\Ports\UDPClientsPortListener;
 
 require __DIR__.'/../vendor/autoload.php';
-
-$logger = new Logger('server');
-
-try {
-    $logger->pushHandler(new StreamHandler('./var/logs/server.log', Logger::DEBUG));
-    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
-
-} catch (Exception $e) {
-
-}
 
 $dotenv = new Dotenv\Dotenv(__DIR__.'/../');
 $dotenv->load();
 
 $configuration = new \Micseres\ServiceHub\Service\Configuration($dotenv);
 
-$client = new Raven_Client($configuration->getParameter('SENTRY'));
-$error_handler = new Raven_ErrorHandler($client);
-$error_handler->registerExceptionHandler();
-$error_handler->registerErrorHandler();
-$error_handler->registerShutdownFunction();
+$logger = new Logger('server');
 
-$router = new \Micseres\ServiceHub\Protocol\Router();
+$client = new Raven_Client($configuration->getParameter('SENTRY'));
+
+try {
+    $logger->pushHandler(new StreamHandler('./var/logs/server.log', Logger::DEBUG));
+    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
+    $logger->pushHandler(new RavenHandler($client, Logger::ERROR));
+
+} catch (Exception $e) {
+
+}
+
+$router = new Router();
 
 $router->addRoute(new \Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute('sleep'));
 
 $clientRequestQuery = new \Micseres\ServiceHub\Server\Exchange\ClientRequestQuery();
 
-$app = new \Micseres\ServiceHub\App($configuration, $logger, $router, $clientRequestQuery);
+$app = new App($configuration, $logger, $router, $clientRequestQuery);
 
-$server = new \Micseres\ServiceHub\Server\BaseServer($app);
+$server = new BaseServer($app);
 
-$serverEvents = \Micseres\ServiceHub\Server\BaseServer::SERVER_EVENTS;
+$serverEvents = BaseServer::SERVER_EVENTS;
 
 $setting = [
     'worker_num' => 1,
-    'task_worker_num' => 16,
+    'task_worker_num' => 32,
     //'daemonize' => true,
     'max_request' => 10000,
     'dispatch_mode' => 2,
     'debug_mode'=> 1
 ];
 
-$server->createBaseServer($serverEvents, $setting);
+$server->createBaseServer(
+    $serverEvents,
+    $configuration->getParameter('BASE_SERVER_ADDR'),
+    $configuration->getParameter('BASE_SERVER_PORT'),
+    $setting
+);
 
 $serviceListenerSetting = [
 //    'ssl_cert_file' => 'ssl.cert',
 //    'ssl_key_file' => 'ssl.key',
 ];
 
-$portEvents = \Micseres\ServiceHub\Server\Ports\PortListenerInterface::DEFAULT_EVENTS;
+$portEvents = PortListenerInterface::UDP_EVENTS;
 
-$serviceListener = new \Micseres\ServiceHub\Server\Ports\ServicesPortListener($app);
-$server->addListener($serviceListener, $portEvents, "0.0.0.0", 9502, SWOOLE_SOCK_UDP, $serviceListenerSetting);
+$serviceListener = new UDPServicesPortListener($app);
+$server->addListener(
+    $serviceListener,
+    $portEvents,
+    $configuration->getParameter('SERVICE_SERVER_ADDR'),
+    $configuration->getParameter('SERVICE_SERVER_PORT'),
+    SWOOLE_SOCK_UDP,
+    $serviceListenerSetting);
 
 
 $clientListenerSetting = [
@@ -72,8 +87,15 @@ $clientListenerSetting = [
 ];
 
 
-$clientListener = new \Micseres\ServiceHub\Server\Ports\ClientsPortListener($app);
-$server->addListener($clientListener, $portEvents, "0.0.0.0", 9503, SWOOLE_SOCK_UDP, $clientListenerSetting);
+$clientListener = new UDPClientsPortListener($app);
 
+$server->addListener(
+    $clientListener,
+    $portEvents,
+    $configuration->getParameter('CLIENT_SERVER_ADDR'),
+    $configuration->getParameter('CLIENT_SERVER_PORT'),
+    SWOOLE_SOCK_UDP,
+    $clientListenerSetting
+);
 
 $server->start();

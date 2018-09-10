@@ -49,11 +49,13 @@ final class BaseServer
 
     /**
      * @param array $events
+     * @param string $ip
+     * @param int $port
      * @param array $setting
      */
-    public function createBaseServer(array $events, array $setting = [])
+    public function createBaseServer(array $events, string $ip, int $port, array $setting = [])
     {
-        $this->swoole = new \Swoole\Server("0.0.0.0", 9501, SWOOLE_BASE, SWOOLE_SOCK_UDP);
+        $this->swoole = new \Swoole\Server($ip, $port, SWOOLE_BASE, SWOOLE_SOCK_UDP);
 
         $this->swoole->set($setting);
 

@@ -2,49 +2,29 @@
 /**
  * Created by PhpStorm.
  * User: zogxray
- * Date: 07.09.18
- * Time: 10:13
+ * Date: 10.09.18
+ * Time: 11:41
  */
 
 namespace Micseres\ServiceHub\Server\Ports;
 
-use Micseres\ServiceHub\App;
 use Micseres\ServiceHub\Protocol\Client\Client;
 use Micseres\ServiceHub\Protocol\Requests\ClientRequest;
 use Micseres\ServiceHub\Protocol\Responses\Response;
 use Micseres\ServiceHub\Server\Exchange\RequestQueryItem;
 use \Swoole\Server as SServer;
+use Micseres\ServiceHub\App;
 
 /**
  * Class ClientsPortListener
- * @package Micseres\ServiceHub\BaseServer\Ports
+ * @package Micseres\ServiceHub\Server\Ports
  */
-class ClientsPortListener implements PortListenerInterface
+abstract class ClientsPortListener
 {
     /**
      * @var App
      */
-    private $app;
-
-    /**
-     * ServicesPortListenerListener constructor.
-     * @param App $app
-     */
-    public function __construct(App $app)
-
-    {
-        $this->app = $app;
-    }
-
-    /**
-     * @param SServer $server
-     * @param int $fd
-     * @param int $reactorId
-     */
-    public function onConnect(SServer $server, int $fd, int $reactorId)
-    {
-        $this->app->getLogger()->info("CLIENT SOCKET connect {$fd} to {$reactorId}");
-    }
+    protected $app;
 
     /**
      * @param SServer $server
@@ -116,16 +96,5 @@ class ClientsPortListener implements PortListenerInterface
                 $this->app->getLogger()->info("CLIENT SOCKET send ERROR RESPONSE to {$fd} from {$reactorId}", (array)$errorResponse);
             }
         }
-
-    }
-
-    /**
-     * @param SServer $server
-     * @param int $fd
-     * @param int $reactorId
-     */
-    public function onClose(SServer $server, int $fd, int $reactorId)
-    {
-        $this->app->getLogger()->info("CLIENT SOCKET close {$fd} connect to {$reactorId}");
     }
 }

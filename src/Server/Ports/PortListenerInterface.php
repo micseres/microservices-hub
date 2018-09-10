@@ -17,7 +17,12 @@ use \Swoole\Server\Port;
  */
 interface PortListenerInterface
 {
-    const DEFAULT_EVENTS = [
+    const UDP_EVENTS = [
+        'receive'
+       // 'packet'
+    ];
+
+    const TCP_EVENTS = [
         'connect',
         'receive',
         'close'
@@ -27,24 +32,8 @@ interface PortListenerInterface
      * @param SServer $server
      * @param int $fd
      * @param int $reactorId
-     * @return mixed
-     */
-    public function onConnect(SServer $server, int $fd, int $reactorId);
-
-    /**
-     * @param SServer $server
-     * @param int $fd
-     * @param int $reactorId
      * @param string $data
      * @return mixed
      */
     public function onReceive(SServer $server, int $fd, int $reactorId, string $data);
-
-    /**
-     * @param SServer $server
-     * @param int $fd
-     * @param int $reactorId
-     * @return mixed
-     */
-    public function onClose(SServer $server, int $fd, int $reactorId);
 }

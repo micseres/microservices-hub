@@ -2,47 +2,28 @@
 /**
  * Created by PhpStorm.
  * User: zogxray
- * Date: 07.09.18
- * Time: 10:11
+ * Date: 10.09.18
+ * Time: 11:48
  */
 
 namespace Micseres\ServiceHub\Server\Ports;
 
-use Micseres\ServiceHub\App;
 use Micseres\ServiceHub\Protocol\MicroServers\MicroServer;
 use Micseres\ServiceHub\Protocol\Requests\ServiceRequest;
 use Micseres\ServiceHub\Protocol\Responses\Response;
 use \Swoole\Server as SServer;
+use Micseres\ServiceHub\App;
 
 /**
- * Class ServicesPortListenerListener
- * @package Micseres\ServiceHub\BaseServer
+ * Class ServicesPortListener
+ * @package Micseres\ServiceHub\Server\Ports
  */
-class ServicesPortListener implements PortListenerInterface
+abstract class ServicesPortListener
 {
     /**
      * @var App
      */
-    private $app;
-
-    /**
-     * ServicesPortListenerListener constructor.
-     * @param App $app
-     */
-    public function __construct(App $app)
-    {
-        $this->app = $app;
-    }
-
-    /**
-     * @param SServer $server
-     * @param int $fd
-     * @param int $reactorId
-     */
-    public function onConnect(SServer $server, int $fd, int $reactorId)
-    {
-        $this->app->getLogger()->info("SERVICE SOCKET connect {$fd} to {$reactorId}");
-    }
+    protected $app;
 
     /**
      * @param SServer $server
@@ -52,7 +33,7 @@ class ServicesPortListener implements PortListenerInterface
      */
     public function onReceive(SServer $server, int $fd, int $reactorId, string $data)
     {
-        $this->app->getLogger()->info("SERVICE SOCKET SOCKET from {$fd} receive data to {$reactorId}");
+        $this->app->getLogger()->info("SERVICE SOCKET from {$fd} receive data to {$reactorId}");
         $request = new ServiceRequest();
 
         $request->deserialize($data);
@@ -104,15 +85,5 @@ class ServicesPortListener implements PortListenerInterface
 
             }
         }
-    }
-
-    /**
-     * @param SServer $server
-     * @param int $fd
-     * @param int $reactorId
-     */
-    public function onClose(SServer $server, int $fd, int $reactorId)
-    {
-        $this->app->getLogger()->info("SERVICE SOCKET close {$fd} connect to {$reactorId}");
     }
 }

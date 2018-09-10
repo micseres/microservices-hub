@@ -59,7 +59,7 @@ class BaseServerListener implements BaseServerListenerInterface
         $task = $this->app->getClientRequestQuery()->get();
 
         if (null !== $task) {
-            $server->send($task->getServer()->getFd(), json_encode((array)$task->getRequest()), $task->getServer()->getReactorId());
+            $server->send($task->getServer()->getFd(), json_encode($task->getRequest()->serialize()), $task->getServer()->getReactorId());
             $this->app->getLogger()->info("BASE SEND REQUEST TO SERVICE", (array)$task->getRequest());
         }
     }
