@@ -9,6 +9,7 @@
 namespace Micseres\ServiceHub;
 use Micseres\ServiceHub\Protocol\Router;
 use Micseres\ServiceHub\Server\Exchange\ClientRequestQuery;
+use Micseres\ServiceHub\Server\Exchange\ServiceResponseQuery;
 use Micseres\ServiceHub\Service\Configuration;
 use Monolog\Logger;
 
@@ -35,6 +36,10 @@ class App
      * @var ClientRequestQuery
      */
     private $clientRequestQuery;
+    /**
+     * @var ServiceResponseQuery
+     */
+    private $serviceResponseQuery;
 
     /**
      * App constructor.
@@ -42,13 +47,20 @@ class App
      * @param Logger $logger
      * @param Router $router
      * @param ClientRequestQuery $clientRequestQuery
+     * @param ServiceResponseQuery $serviceResponseQuery
      */
-    public function __construct(Configuration $configuration, Logger $logger, Router $router, ClientRequestQuery $clientRequestQuery)
+    public function __construct(
+        Configuration $configuration,
+        Logger $logger,
+        Router $router,
+        ClientRequestQuery $clientRequestQuery,
+        ServiceResponseQuery $serviceResponseQuery)
     {
         $this->configuration = $configuration;
         $this->logger = $logger;
         $this->router = $router;
         $this->clientRequestQuery = $clientRequestQuery;
+        $this->serviceResponseQuery = $serviceResponseQuery;
     }
 
     /**
@@ -81,5 +93,13 @@ class App
     public function getClientRequestQuery(): ClientRequestQuery
     {
         return $this->clientRequestQuery;
+    }
+
+    /**
+     * @return ServiceResponseQuery
+     */
+    public function getServiceResponseQuery(): ServiceResponseQuery
+    {
+        return $this->serviceResponseQuery;
     }
 }

@@ -6,7 +6,7 @@
  * Time: 17:26
  */
 
-namespace Micseres\ServiceHub\Protocol\Middleware;
+namespace Micseres\ServiceHub\Server\Middleware;
 
 use Micseres\ServiceHub\Protocol\Requests\RequestInterface;
 use Micseres\ServiceHub\Protocol\Responses\ResponseInterface;

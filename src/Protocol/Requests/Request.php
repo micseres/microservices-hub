@@ -126,4 +126,33 @@ class Request implements RequestInterface
 
         return $this;
     }
+
+    /**
+     * @param $object
+     * @return array
+     * @throws \ReflectionException
+     */
+    public function serialize($object = null) :array
+    {
+        if (null === $object) {
+            $object = $this;
+        }
+
+        $reflectionClass = new ReflectionClass($object);
+
+        $properties = $reflectionClass->getProperties();
+
+        $array = [];
+        foreach ($properties as $property) {
+            $property->setAccessible(true);
+            $value = $property->getValue($object);
+            if (is_object($value)) {
+                $array[$property->getName()] = $this->serialize($value);
+            } else {
+                $array[$property->getName()] = $value;
+            }
+        }
+
+        return $array;
+    }
 }

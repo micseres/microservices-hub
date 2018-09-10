@@ -57,7 +57,9 @@ class MicroServerRoute implements MicroServerRouteInterface
         /** @var @todo WRITE SOME FINE $count */
         $count = count($this->servers);
 
-        return $this->servers[rand(0, $count)];
+        var_dump($count);
+
+        return $this->servers[rand(0, $count-1)];
     }
 
     /**

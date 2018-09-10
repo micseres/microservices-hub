@@ -15,6 +15,15 @@ try {
 
 }
 
+/**
+ * @param $n
+ * @return float
+ */
+function fibonacci($n)
+{
+    return round(pow((sqrt(5)+1)/2, $n) / sqrt(5));
+}
+
 $client = new swoole_client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
 
 $client->on("connect", function(swoole_client $cli) use ($logger) {
@@ -31,9 +40,9 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
     ];
 
     $cli->send(json_encode($request));
-    $logger->info("SENT DATA TO SERVER", $request);
+    $logger->info("SENT REGISTER REQUEST TO SERVER", $request);
 
-    swoole_timer_tick(30000, function () use ($cli, $logger) {
+    swoole_timer_tick(29000, function () use ($cli, $logger) {
         $request = [
             'protocol' => '1.0',
             'action' => 'register',
@@ -47,13 +56,34 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
         ];
 
         $cli->send(json_encode($request));
-        $logger->info("SENT DATA TO SERVER", $request);
+        $logger->info("SENT REGISTER REQUEST TO SERVER", $request);
     });
 });
 
 $client->on("receive", function(swoole_client $cli, $data) use ($logger) {
     $request = json_decode($data, true);
-    $logger->info("RECEIVE DATA FROM SERVER", $request);
+
+    if ($request['route'] === 'fibonacci') {
+        $logger->info("RECEIVE WORK DATA FROM SERVER", $request);
+
+        $response = [
+            'protocol' => '1.0',
+            'action' => $request['action'],
+            'route' => $request['route'],
+            'message' => 'That is number',
+            'payload' => [
+                'fibonacci' => fibonacci($request['payload']['number']),
+                'task_id' => $request['payload']['task_id'],
+                'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+            ]
+        ];
+
+        $cli->send(json_encode($response));
+
+        $logger->info("SENT SERVICE WORK DONE TO SERVER", (array)$response);
+    } else {
+        $logger->info("RECEIVE REGISTER DATA FROM SERVER", $request);
+    }
 
     usleep(1000);
 });

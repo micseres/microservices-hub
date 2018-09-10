@@ -41,8 +41,9 @@ $router = new Router();
 $router->addRoute(new \Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute('fibonacci'));
 
 $clientRequestQuery = new \Micseres\ServiceHub\Server\Exchange\ClientRequestQuery();
+$serviceResponseQuery = new \Micseres\ServiceHub\Server\Exchange\ServiceResponseQuery();
 
-$app = new App($configuration, $logger, $router, $clientRequestQuery);
+$app = new App($configuration, $logger, $router, $clientRequestQuery, $serviceResponseQuery);
 
 $server = new BaseServer($app);
 
@@ -54,7 +55,7 @@ $setting = [
     //'daemonize' => true,
     'max_request' => 10000,
     'dispatch_mode' => 2,
-    'debug_mode'=> 1
+    'debug_mode'=> 0
 ];
 
 $server->createBaseServer(

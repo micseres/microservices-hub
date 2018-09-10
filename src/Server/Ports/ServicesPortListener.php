@@ -77,13 +77,24 @@ abstract class ServicesPortListener
                 $response->setPayload([
                     'time' => $registeredAt->format('Y-m-d H:i:s.u')
                 ]);
+
                 $server->send($fd, json_encode($response->serialize()));
                 $this->app->getLogger()->info("SERVICE SOCKET REGISTERED to {$fd} from {$reactorId}", (array)$response);
-            }
+            } else {
+                $queryItem = $this->app->getServiceResponseQuery()->pick($request->getPayload()['task_id']);
 
-            /**@todo PUT SOME REGISTRY HERE**/
-            if ($request->getAction() === 'complete') {
+                $request2 = [
+                    'protocol' => '1.0',
+                    'action' => $request->getAction(),
+                    'route' => $request->getRoute(),
+                    'message' => $request->getMessage(),
+                    'payload' => [
+                        'fibonacci' => $request->getPayload()['fibonacci'],
+                        'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+                    ]
+                ];
 
+                $server->send($queryItem->getClient()->getFd(), json_encode($request2), $queryItem->getClient()->getReactorId());
             }
         }
     }

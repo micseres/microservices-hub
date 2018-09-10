@@ -15,8 +15,19 @@ namespace Micseres\ServiceHub\Protocol\Requests;
 interface RequestInterface
 {
     /**
+     * @return array
+     */
+    public function getPayload(): array;
+
+    /**
      * @param string $json
      * @return RequestInterface|null
      */
     public function deserialize(string $json) :?RequestInterface;
+
+    /**
+     * @param null $object
+     * @return array
+     */
+    public function serialize($object = null) :array;
 }

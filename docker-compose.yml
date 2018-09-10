@@ -16,8 +16,8 @@ services:
     networks:
       hub:
         ipv4_address: 10.5.0.111
-#    volumes:
-#      - ./:/app
+    volumes:
+      - ./:/app
 
   client1:
     build: ./test/client
@@ -28,8 +28,8 @@ services:
         ipv4_address: 10.5.0.122
     depends_on:
       - server
-#    volumes:
-#    - ./test/client:/app
+    volumes:
+      - ./test/client:/app
 
   client2:
     build: ./test/client
@@ -40,8 +40,8 @@ services:
         ipv4_address: 10.5.0.123
     depends_on:
       - server
-#    volumes:
-#    - ./test/client:/app
+    volumes:
+      - ./test/client:/app
 
   client3:
     build: ./test/client
@@ -51,9 +51,33 @@ services:
       hub:
         ipv4_address: 10.5.0.124
     depends_on:
-    - server
-  #    volumes:
-  #    - ./test/client:/app
+      - server
+    volumes:
+      - ./test/client:/app
+
+  client4:
+    build: ./test/client
+    container_name: client4
+    image: zogxray/micro-services-client
+    networks:
+      hub:
+        ipv4_address: 10.5.0.125
+    depends_on:
+      - server
+    volumes:
+      - ./test/client:/app
+
+  client5:
+    build: ./test/client
+    container_name: client5
+    image: zogxray/micro-services-client
+    networks:
+      hub:
+        ipv4_address: 10.5.0.126
+    depends_on:
+      - server
+    volumes:
+      - ./test/client:/app
 
   service1:
     build: ./test/service
@@ -64,8 +88,8 @@ services:
         ipv4_address: 10.5.0.116
     depends_on:
       - server
-#    volumes:
-#    - ./test/service:/app
+    volumes:
+    - ./test/service:/app
 
   service2:
     build: ./test/service
@@ -86,6 +110,42 @@ services:
     networks:
       hub:
         ipv4_address: 10.5.0.118
+    depends_on:
+    - server
+#    volumes:
+#    - ./test/service:/app
+
+  service4:
+    build: ./test/service
+    container_name: service4
+    image: zogxray/micro-services-service
+    networks:
+      hub:
+        ipv4_address: 10.5.0.119
+    depends_on:
+    - server
+#    volumes:
+#    - ./test/service:/app
+
+  service5:
+    build: ./test/service
+    container_name: service5
+    image: zogxray/micro-services-service
+    networks:
+      hub:
+        ipv4_address: 10.5.0.120
+    depends_on:
+    - server
+#    volumes:
+#    - ./test/service:/app
+
+  service6:
+    build: ./test/service
+    container_name: service6
+    image: zogxray/micro-services-service
+    networks:
+      hub:
+        ipv4_address: 10.5.0.121
     depends_on:
     - server
 #    volumes:

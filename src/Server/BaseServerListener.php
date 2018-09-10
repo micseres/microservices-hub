@@ -10,6 +10,7 @@ namespace Micseres\ServiceHub\Server;
 
 use Micseres\ServiceHub\App;
 use Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute;
+use Micseres\ServiceHub\Protocol\Requests\ServerRequest;
 use \Swoole\Server as SServer;
 
 /**
@@ -37,21 +38,19 @@ class BaseServerListener implements BaseServerListenerInterface
      */
     public function checkExpiredRouter(int $interval, SServer $server)
     {
-        $router = $this->app->getRouter();
-        /** @var MicroServerRoute $route */
-        foreach ($router->getRoutes() as $route) {
-            foreach ($route->getServers() as $index => $microServer) {
-                $server->send($microServer->getFd(), json_encode(['test' => 'test']), $microServer->getReactorId());
-
-                $now = new \DateTime('now');
-                $diff = $now->getTimestamp() - $microServer->getTime()->getTimestamp();
-                if ($diff > (int)$this->app->getConfiguration()->getParameter('SERVER_LIVE_INTERVAL')) {
-                    $this->app->getLogger()->info("BASE REMOVE EXPIRED micro server {$microServer->getIp()} from {$route->getRoute()}");
-                    $route->removeServer($index);
-
-                }
-            }
-        }
+//        $router = $this->app->getRouter();
+//        /** @var MicroServerRoute $route */
+//        foreach ($router->getRoutes() as $route) {
+//            foreach ($route->getServers() as $index => $microServer) {
+//                $now = new \DateTime('now');
+//                $diff = $now->getTimestamp() - $microServer->getTime()->getTimestamp();
+//                if ($diff > (int)$this->app->getConfiguration()->getParameter('SERVER_LIVE_INTERVAL')) {
+//                    $this->app->getLogger()->info("BASE REMOVE EXPIRED micro server {$microServer->getIp()} from {$route->getRoute()}");
+//                    $route->removeServer($index);
+//
+//                }
+//            }
+//        }
     }
 
     /**
@@ -61,11 +60,32 @@ class BaseServerListener implements BaseServerListenerInterface
      */
     public function workWithClientRequestQuery(int $interval, SServer $server)
     {
-        $task = $this->app->getClientRequestQuery()->get();
+        $task = $this->app->getClientRequestQuery()->shift();
 
         if (null !== $task) {
-            $server->send($task->getServer()->getFd(), json_encode(['temp' => 'temp']), $task->getServer()->getReactorId());
-            $this->app->getLogger()->info("BASE SEND REQUEST TO SERVICE", (array)$task->getRequest());
+            $request = $task->getRequest();
+
+            $request2 = [
+                'protocol' => '1.0',
+                'action' => $request->getAction(),
+                'route' => $request->getRoute(),
+                'message' => $request->getMessage(),
+                'payload' => [
+                    'number' => $request->getPayload()['number'],
+                    'task_id' => $task->getId(),
+                    'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+                ]
+            ];
+
+            $isSend = $server->send($task->getServer()->getFd(), json_encode($request2), $task->getServer()->getReactorId());
+
+            if (true === $isSend) {
+                $this->app->getServiceResponseQuery()->push($task);
+                $this->app->getLogger()->info("BASE SEND REQUEST TO SERVICE", (array)$request);
+            } else {
+                $this->app->getClientRequestQuery()->push($task);
+                $this->app->getLogger()->error("BASE FAILED SEND REQUEST TO SERVICE", (array)$request);
+            }
         }
     }
 
@@ -76,13 +96,12 @@ class BaseServerListener implements BaseServerListenerInterface
     public function onWorkerStart(SServer $server, int $worker_id)
     {
         if ($worker_id === 0) {
-            $time = 1000;
-            $server->tick($time,  [$this, 'checkExpiredRouter'], $server);
+            $time = 1000;            $server->tick($time,  [$this, 'checkExpiredRouter'], $server);
             $this->app->getLogger()->info("BASE WORKER {$worker_id} TIMER {$time} FOR ROUTES START");
         }
 
-        $time = 1000;
-        $server->tick($time,  [$this, 'workWithClientRequestQuery'], $server);
+        $time = 1;
+        $server->tick($time, [$this, 'workWithClientRequestQuery'], $server);
         $this->app->getLogger()->info("BASE WORKER {$worker_id} TIMER {$time} FOR ROUTES START");
 
         $this->app->getLogger()->info("BASE WORKER {$worker_id} START");

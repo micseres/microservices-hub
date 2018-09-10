@@ -10,6 +10,7 @@ namespace Micseres\ServiceHub\Server\Exchange;
 
 use Micseres\ServiceHub\Protocol\Client\Client;
 use Micseres\ServiceHub\Protocol\MicroServers\MicroServer;
+use Micseres\ServiceHub\Protocol\Requests\ClientRequest;
 use Micseres\ServiceHub\Protocol\Requests\RequestInterface;
 use ReflectionClass;
 
@@ -19,7 +20,10 @@ use ReflectionClass;
  */
 class RequestQueryItem
 {
-    /** @var RequestInterface */
+    /** @var string */
+    private $id;
+
+    /** @var ClientRequest */
     private $request;
 
     /** @var MicroServer */
@@ -30,21 +34,30 @@ class RequestQueryItem
 
     /**
      * RequestQueryItem constructor.
-     * @param RequestInterface $request
+     * @param ClientRequest $request
      * @param MicroServer $server
      * @param Client $client
      */
-    public function __construct(RequestInterface $request, MicroServer $server, Client $client)
+    public function __construct(ClientRequest $request, MicroServer $server, Client $client)
     {
+        $this->id = uniqid('', true);
         $this->request = $request;
         $this->server = $server;
         $this->client = $client;
     }
 
     /**
-     * @return RequestInterface
+     * @return string
      */
-    public function getRequest(): RequestInterface
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return ClientRequest
+     */
+    public function getRequest(): ClientRequest
     {
         return $this->request;
     }

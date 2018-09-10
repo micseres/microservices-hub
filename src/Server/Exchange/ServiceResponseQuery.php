@@ -2,17 +2,14 @@
 /**
  * Created by PhpStorm.
  * User: zogxray
- * Date: 07.09.18
- * Time: 16:05
+ * Date: 10.09.18
+ * Time: 14:48
  */
 
 namespace Micseres\ServiceHub\Server\Exchange;
 
-/**
- * Class RequestStack
- * @package Micseres\ServiceHub\Server\Exchange
- */
-class ClientRequestQuery
+
+class ServiceResponseQuery
 {
     /**
      * @var RequestQueryItem[]
@@ -20,15 +17,20 @@ class ClientRequestQuery
     protected $items = [];
 
     /**
+     * @param string $id
      * @return RequestQueryItem|null
      */
-    public function shift(): ?RequestQueryItem
+    public function pick(string $id): ?RequestQueryItem
     {
-        if (!isset($this->items[0])) {
+        if (!isset($this->items[$id])) {
             return null;
         }
 
-        return array_shift($this->items);
+        $item = $this->items[$id];
+
+        unset($this->items[$id]);
+
+        return $item;
     }
 
     /**
@@ -36,6 +38,6 @@ class ClientRequestQuery
      */
     public function push(RequestQueryItem $item): void
     {
-        $this->items[] = $item;
+        $this->items[$item->getId()] = $item;
     }
 }

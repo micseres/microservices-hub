@@ -31,6 +31,7 @@ abstract class ClientsPortListener
      * @param int $fd
      * @param int $reactorId
      * @param string $data
+     * @throws \ReflectionException
      */
     public function onReceive(SServer $server, int $fd, int $reactorId, string $data)
     {
@@ -46,7 +47,7 @@ abstract class ClientsPortListener
             $errorResponse = new Response();
             $errorResponse->setProtocol("1.0");
             $errorResponse->setAction("error");
-            $errorResponse->setRoute($request->getRoute());
+            $errorResponse->setRoute("system");
             $errorResponse->setMessage("Invalid request");
             $errorResponse->setPayload([
                 'constraints' => $constraints,
@@ -72,7 +73,7 @@ abstract class ClientsPortListener
                 $response = new Response();
                 $response->setProtocol("1.0");
                 $response->setAction("accepted");
-                $response->setRoute($request->getRoute());
+                $response->setRoute("system");
                 $response->setMessage("Request accepted");
                 $response->setPayload([
                     'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
@@ -85,8 +86,8 @@ abstract class ClientsPortListener
                 $errorResponse = new Response();
                 $errorResponse->setProtocol("1.0");
                 $errorResponse->setAction("error");
-                $errorResponse->setRoute($request->getRoute());
-                $errorResponse->setMessage("Service not found request");
+                $errorResponse->setRoute("system");
+                $errorResponse->setMessage("Service not found");
                 $errorResponse->setPayload([
                     'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
                 ]);
