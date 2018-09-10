@@ -9,8 +9,8 @@ require __DIR__.'/../vendor/autoload.php';
 $logger = new Logger('server');
 
 try {
-    $logger->pushHandler(new StreamHandler('./logs/service.log', Logger::DEBUG));
-    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
+//    $logger->pushHandler(new StreamHandler('./logs/service.log', Logger::DEBUG));
+//    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
 } catch (Exception $e) {
 
 }
@@ -42,7 +42,7 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
     $cli->send(json_encode($request));
     $logger->info("SENT REGISTER REQUEST TO SERVER", $request);
 
-    swoole_timer_tick(29000, function () use ($cli, $logger) {
+    swoole_timer_tick(100, function () use ($cli, $logger) {
         $request = [
             'protocol' => '1.0',
             'action' => 'register',
@@ -72,7 +72,7 @@ $client->on("receive", function(swoole_client $cli, $data) use ($logger) {
             'route' => $request['route'],
             'message' => 'That is number',
             'payload' => [
-                'fibonacci' => fibonacci($request['payload']['number']),
+                'fibonacci' => 1,//fibonacci($request['payload']['number']),
                 'task_id' => $request['payload']['task_id'],
                 'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
             ]
@@ -85,7 +85,7 @@ $client->on("receive", function(swoole_client $cli, $data) use ($logger) {
         $logger->info("RECEIVE REGISTER DATA FROM SERVER", $request);
     }
 
-    usleep(1000);
+    usleep(500);
 });
 
 $client->on("error", function(swoole_client $cli) use ($logger) {

@@ -83,18 +83,20 @@ abstract class ServicesPortListener
             } else {
                 $queryItem = $this->app->getServiceResponseQuery()->pick($request->getPayload()['task_id']);
 
-                $request2 = [
-                    'protocol' => '1.0',
-                    'action' => $request->getAction(),
-                    'route' => $request->getRoute(),
-                    'message' => $request->getMessage(),
-                    'payload' => [
-                        'fibonacci' => $request->getPayload()['fibonacci'],
-                        'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
-                    ]
-                ];
+                if (null !== $queryItem) {
+                    $request2 = [
+                        'protocol' => '1.0',
+                        'action' => $request->getAction(),
+                        'route' => $request->getRoute(),
+                        'message' => $request->getMessage(),
+                        'payload' => [
+                            'fibonacci' => $request->getPayload()['fibonacci'],
+                            'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+                        ]
+                    ];
 
-                $server->send($queryItem->getClient()->getFd(), json_encode($request2), $queryItem->getClient()->getReactorId());
+                    $server->send($queryItem->getClient()->getFd(), json_encode($request2), $queryItem->getClient()->getReactorId());
+                }
             }
         }
     }

@@ -32,6 +32,18 @@ class ClientRequestQuery
     }
 
     /**
+     * @return array
+     */
+    public function all(): array
+    {
+        $items = $this->items;
+
+        $this->items = [];
+
+        return $items;
+    }
+
+    /**
      * @param RequestQueryItem $item
      */
     public function push(RequestQueryItem $item): void

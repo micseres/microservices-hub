@@ -11,6 +11,7 @@ namespace Micseres\ServiceHub\Server;
 use Micseres\ServiceHub\App;
 use Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute;
 use Micseres\ServiceHub\Protocol\Requests\ServerRequest;
+use Micseres\ServiceHub\Server\Exchange\RequestQueryItem;
 use \Swoole\Server as SServer;
 
 /**
@@ -38,19 +39,18 @@ class BaseServerListener implements BaseServerListenerInterface
      */
     public function checkExpiredRouter(int $interval, SServer $server)
     {
-//        $router = $this->app->getRouter();
-//        /** @var MicroServerRoute $route */
-//        foreach ($router->getRoutes() as $route) {
-//            foreach ($route->getServers() as $index => $microServer) {
-//                $now = new \DateTime('now');
-//                $diff = $now->getTimestamp() - $microServer->getTime()->getTimestamp();
-//                if ($diff > (int)$this->app->getConfiguration()->getParameter('SERVER_LIVE_INTERVAL')) {
-//                    $this->app->getLogger()->info("BASE REMOVE EXPIRED micro server {$microServer->getIp()} from {$route->getRoute()}");
-//                    $route->removeServer($index);
-//
-//                }
-//            }
-//        }
+        $router = $this->app->getRouter();
+        /** @var MicroServerRoute $route */
+        foreach ($router->getRoutes() as $route) {
+            foreach ($route->getServers() as $index => $microServer) {
+                $now = new \DateTime('now');
+                $diff = $now->getTimestamp() - $microServer->getTime()->getTimestamp();
+                if ($diff > (int)$this->app->getConfiguration()->getParameter('SERVER_LIVE_INTERVAL')) {
+                    $this->app->getLogger()->info("BASE REMOVE EXPIRED micro server {$microServer->getIp()} from {$route->getRoute()}");
+                    $route->removeServer($index);
+                }
+            }
+        }
     }
 
     /**
@@ -96,12 +96,14 @@ class BaseServerListener implements BaseServerListenerInterface
     public function onWorkerStart(SServer $server, int $worker_id)
     {
         if ($worker_id === 0) {
-            $time = 1000;            $server->tick($time,  [$this, 'checkExpiredRouter'], $server);
+            $time = 100;
+            $server->tick($time,  [$this, 'checkExpiredRouter'], $server);
             $this->app->getLogger()->info("BASE WORKER {$worker_id} TIMER {$time} FOR ROUTES START");
         }
 
         $time = 1;
         $server->tick($time, [$this, 'workWithClientRequestQuery'], $server);
+
         $this->app->getLogger()->info("BASE WORKER {$worker_id} TIMER {$time} FOR ROUTES START");
 
         $this->app->getLogger()->info("BASE WORKER {$worker_id} START");

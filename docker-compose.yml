@@ -13,6 +13,7 @@ services:
      - SERVICE_SERVER_PORT=9502
      - BASE_SERVER_ADDR=0.0.0.0
      - BASE_SERVER_PORT=9501
+     - PHP_MEMORY_LIMIT=1024M
     networks:
       hub:
         ipv4_address: 10.5.0.111
@@ -25,7 +26,7 @@ services:
     image: zogxray/micro-services-client
     networks:
       hub:
-        ipv4_address: 10.5.0.122
+        ipv4_address: 10.5.0.22
     depends_on:
       - server
     volumes:
@@ -37,7 +38,7 @@ services:
     image: zogxray/micro-services-client
     networks:
       hub:
-        ipv4_address: 10.5.0.123
+        ipv4_address: 10.5.0.23
     depends_on:
       - server
     volumes:
@@ -49,7 +50,7 @@ services:
     image: zogxray/micro-services-client
     networks:
       hub:
-        ipv4_address: 10.5.0.124
+        ipv4_address: 10.5.0.24
     depends_on:
       - server
     volumes:
@@ -61,7 +62,7 @@ services:
     image: zogxray/micro-services-client
     networks:
       hub:
-        ipv4_address: 10.5.0.125
+        ipv4_address: 10.5.0.25
     depends_on:
       - server
     volumes:
@@ -73,11 +74,71 @@ services:
     image: zogxray/micro-services-client
     networks:
       hub:
-        ipv4_address: 10.5.0.126
+        ipv4_address: 10.5.0.26
     depends_on:
       - server
     volumes:
       - ./test/client:/app
+
+  client6:
+    build: ./test/client
+    container_name: client6
+    image: zogxray/micro-services-client
+    networks:
+      hub:
+        ipv4_address: 10.5.0.27
+    depends_on:
+    - server
+    volumes:
+    - ./test/client:/app
+
+  client7:
+    build: ./test/client
+    container_name: client7
+    image: zogxray/micro-services-client
+    networks:
+      hub:
+        ipv4_address: 10.5.0.28
+    depends_on:
+    - server
+    volumes:
+    - ./test/client:/app
+
+  client8:
+    build: ./test/client
+    container_name: client8
+    image: zogxray/micro-services-client
+    networks:
+      hub:
+        ipv4_address: 10.5.0.29
+    depends_on:
+    - server
+    volumes:
+    - ./test/client:/app
+
+  client9:
+    build: ./test/client
+    container_name: client9
+    image: zogxray/micro-services-client
+    networks:
+      hub:
+        ipv4_address: 10.5.0.30
+    depends_on:
+    - server
+    volumes:
+    - ./test/client:/app
+
+  client10:
+    build: ./test/client
+    container_name: client10
+    image: zogxray/micro-services-client
+    networks:
+      hub:
+        ipv4_address: 10.5.0.31
+    depends_on:
+    - server
+    volumes:
+    - ./test/client:/app
 
   service1:
     build: ./test/service
@@ -146,6 +207,54 @@ services:
     networks:
       hub:
         ipv4_address: 10.5.0.121
+    depends_on:
+    - server
+#    volumes:
+#    - ./test/service:/app
+
+  service7:
+    build: ./test/service
+    container_name: service7
+    image: zogxray/micro-services-service
+    networks:
+      hub:
+        ipv4_address: 10.5.0.122
+    depends_on:
+    - server
+#    volumes:
+#    - ./test/service:/app
+
+  service8:
+    build: ./test/service
+    container_name: service8
+    image: zogxray/micro-services-service
+    networks:
+      hub:
+        ipv4_address: 10.5.0.123
+    depends_on:
+    - server
+#    volumes:
+#    - ./test/service:/app
+
+  service9:
+    build: ./test/service
+    container_name: service9
+    image: zogxray/micro-services-service
+    networks:
+      hub:
+        ipv4_address: 10.5.0.124
+    depends_on:
+    - server
+#    volumes:
+#    - ./test/service:/app
+
+  service10:
+    build: ./test/service
+    container_name: service10
+    image: zogxray/micro-services-service
+    networks:
+      hub:
+        ipv4_address: 10.5.0.125
     depends_on:
     - server
 #    volumes:

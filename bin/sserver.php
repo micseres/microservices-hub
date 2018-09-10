@@ -16,6 +16,8 @@ use Micseres\ServiceHub\Server\Ports\PortListenerInterface;
 use Micseres\ServiceHub\Server\Ports\UDPServicesPortListener;
 use Micseres\ServiceHub\Server\Ports\UDPClientsPortListener;
 
+ini_set('memory_limit', '4096M');
+
 require __DIR__.'/../vendor/autoload.php';
 
 $dotenv = new Dotenv\Dotenv(__DIR__.'/../');
@@ -28,9 +30,9 @@ $logger = new Logger('server');
 $client = new Raven_Client($configuration->getParameter('SENTRY'));
 
 try {
-    $logger->pushHandler(new StreamHandler('./var/logs/server.log', Logger::DEBUG));
-    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
-    $logger->pushHandler(new RavenHandler($client, Logger::ERROR));
+//    $logger->pushHandler(new StreamHandler('./var/logs/server.log', Logger::DEBUG));
+//    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
+//    $logger->pushHandler(new RavenHandler($client, Logger::ERROR));
 
 } catch (Exception $e) {
 
@@ -52,8 +54,8 @@ $serverEvents = BaseServer::SERVER_EVENTS;
 $setting = [
     'worker_num' => 1,
     'task_worker_num' => 32,
-    //'daemonize' => true,
-    'max_request' => 10000,
+//    'daemonize' => true,
+    'max_request' => 100000,
     'dispatch_mode' => 2,
     'debug_mode'=> 0
 ];
