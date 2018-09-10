@@ -30,6 +30,7 @@ abstract class ServicesPortListener
      * @param int $fd
      * @param int $reactorId
      * @param string $data
+     * @throws \ReflectionException
      */
     public function onReceive(SServer $server, int $fd, int $reactorId, string $data)
     {
@@ -56,17 +57,17 @@ abstract class ServicesPortListener
             $this->app->getLogger()->info("SERVICE SOCKET send ERROR RESPONSE to {$fd} from {$reactorId}", (array)$errorResponse);
         } else {
             /**@todo PUT SOME REGISTRY HERE **/
-            if ($request->getAction() === 'register') {
+            if ($request->getRoute() === 'system' && $request->getAction() === 'register') {
 
                 $router = $this->app->getRouter();
                 $remoteIp = $server->connection_info($fd)["remote_ip"];
                 $remotePort = $server->connection_info($fd)["remote_port"];
 
-                $route = $router->getRoute($request->getRoute());
+                $route = $router->getRoute($request->getPayload()['route']);
                 $microServiceServer = new MicroServer($fd, $reactorId, $remoteIp, $remotePort, $request->getPayload()['load'], $registeredAt = new \DateTime('now'));
                 $route->addOrRefreshServer($microServiceServer);
 
-                $this->app->getLogger()->info("ADD micro server {$microServiceServer->getIp()} to {$request->getRoute()}", (array)$microServiceServer);
+                $this->app->getLogger()->info("ADD micro server {$microServiceServer->getIp()} to {$request->getPayload()['route']}", (array)$microServiceServer);
 
                 $response = new Response();
                 $response->setProtocol("1.0");

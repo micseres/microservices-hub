@@ -13,9 +13,10 @@ docker-compose up --build --force-recreate
 {
   "protocol": "1.0",
   "action": "register",
-  "route": "sleep",
+  "route": "system",
   "message": "Register me, I am ready",
   "payload": {
+    "route": "fibonacci",
     "load": "90",
     "time": "09-05-2018 10:00:00.111111"
   }
@@ -31,7 +32,7 @@ All done
 {
   "protocol": "1.0",
   "action": "registered",
-  "route": "sleep",
+  "route": "system",
   "message": "Service registered for work",
   "payload": {
     "time": "09-05-2018 10:00:00.111111"
@@ -59,11 +60,11 @@ Sync and back
 ```json
 {
   "protocol": "1.0",
-  "action": "task",
-  "route": "sleep",
+  "action": "count",
+  "route": "fibonacci",
   "message": "Sleep",
   "payload": {
-    "interval": "10"
+    "number": "10"
   }
 }
 ```

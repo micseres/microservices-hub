@@ -19,11 +19,11 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
     swoole_timer_tick(1000, function () use ($cli, $logger) {
         $request = [
             'protocol' => '1.0',
-            'action' => 'task',
-            'route' => 'sleep',
-            'message' => 'Sleep',
+            'action' => 'count',
+            'route' => 'fibonacci',
+            'message' => 'Count fibonacci please',
             'payload' => [
-                'interval' => rand(0,99)
+                'number' => rand(0,99)
             ]
         ];
 

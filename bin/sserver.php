@@ -38,7 +38,7 @@ try {
 
 $router = new Router();
 
-$router->addRoute(new \Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute('sleep'));
+$router->addRoute(new \Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute('fibonacci'));
 
 $clientRequestQuery = new \Micseres\ServiceHub\Server\Exchange\ClientRequestQuery();
 

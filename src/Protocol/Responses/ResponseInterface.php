@@ -14,5 +14,9 @@ namespace Micseres\ServiceHub\Protocol\Responses;
  */
 interface ResponseInterface
 {
-
+    /**
+     * @param null $object
+     * @return array
+     */
+    public function serialize($object = null) :array;
 }

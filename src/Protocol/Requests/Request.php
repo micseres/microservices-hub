@@ -126,24 +126,4 @@ class Request implements RequestInterface
 
         return $this;
     }
-
-    /**
-     * @return array
-     */
-    public function serialize(): array
-    {
-        $json = [];
-
-        try {
-            $class = new ReflectionClass($this);
-        } catch (\ReflectionException $e) {
-        }
-
-        foreach ($class->getProperties() as $key => $value) {
-            $value->setAccessible(true);
-            $json[$value->getName()] = $value->getValue($this);
-        }
-
-        return $json;
-    }
 }

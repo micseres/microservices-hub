@@ -19,9 +19,4 @@ interface RequestInterface
      * @return RequestInterface|null
      */
     public function deserialize(string $json) :?RequestInterface;
-
-    /**
-     * @return array
-     */
-    public function serialize(): array;
 }

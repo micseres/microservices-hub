@@ -21,9 +21,10 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
     $request = [
         'protocol' => '1.0',
         'action' => 'register',
-        'route' => 'sleep',
+        'route' => 'system',
         'message' => 'Register me, I am ready for play',
         'payload' => [
+            'route' => 'fibonacci',
             'load' => rand(0,99),
             'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
         ]
@@ -36,9 +37,10 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
         $request = [
             'protocol' => '1.0',
             'action' => 'register',
-            'route' => 'sleep',
+            'route' => 'system',
             'message' => 'Register me, I am ready for play',
             'payload' => [
+                'route' => 'fibonacci',
                 'load' => rand(0,99),
                 'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
             ]

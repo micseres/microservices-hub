@@ -54,12 +54,17 @@ class BaseServerListener implements BaseServerListenerInterface
         }
     }
 
+    /**
+     * @param int $interval
+     * @param SServer $server
+     * @throws \ReflectionException
+     */
     public function workWithClientRequestQuery(int $interval, SServer $server)
     {
         $task = $this->app->getClientRequestQuery()->get();
 
         if (null !== $task) {
-            $server->send($task->getServer()->getFd(), json_encode($task->getRequest()->serialize()), $task->getServer()->getReactorId());
+            $server->send($task->getServer()->getFd(), json_encode(['temp' => 'temp']), $task->getServer()->getReactorId());
             $this->app->getLogger()->info("BASE SEND REQUEST TO SERVICE", (array)$task->getRequest());
         }
     }

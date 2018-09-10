@@ -11,6 +11,7 @@ namespace Micseres\ServiceHub\Server\Exchange;
 use Micseres\ServiceHub\Protocol\Client\Client;
 use Micseres\ServiceHub\Protocol\MicroServers\MicroServer;
 use Micseres\ServiceHub\Protocol\Requests\RequestInterface;
+use ReflectionClass;
 
 /**
  * Class RequestQueryItem

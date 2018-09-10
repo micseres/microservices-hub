@@ -14,7 +14,7 @@ use ReflectionClass;
  * Class Response
  * @package Micseres\ServiceHub\Protocol\Responses
  */
-class Response
+class Response implements ResponseInterface
 {
     private $protocol;
 
@@ -106,20 +106,32 @@ class Response
         $this->payload = $payload;
     }
 
-    public function serialize()
+    /**
+     * @param $object
+     * @return array
+     * @throws \ReflectionException
+     */
+    public function serialize($object = null) :array
     {
-        $json = [];
-
-        try {
-            $class = new ReflectionClass($this);
-        } catch (\ReflectionException $e) {
+        if (null === $object) {
+            $object = $this;
         }
 
-        foreach ($class->getProperties() as $key => $value) {
-            $value->setAccessible(true);
-            $json[$value->getName()] = $value->getValue($this);
+        $reflectionClass = new ReflectionClass($object);
+
+        $properties = $reflectionClass->getProperties();
+
+        $array = [];
+        foreach ($properties as $property) {
+            $property->setAccessible(true);
+            $value = $property->getValue($object);
+            if (is_object($value)) {
+                $array[$property->getName()] = $this->serialize($value);
+            } else {
+                $array[$property->getName()] = $value;
+            }
         }
 
-        return $json;
+        return $array;
     }
 }

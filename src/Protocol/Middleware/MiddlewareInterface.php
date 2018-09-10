@@ -8,8 +8,6 @@
 
 namespace Micseres\ServiceHub\Protocol\Middleware;
 
-
-
 use Micseres\ServiceHub\Protocol\Requests\RequestInterface;
 use Micseres\ServiceHub\Protocol\Responses\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
