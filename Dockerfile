@@ -8,6 +8,6 @@ COPY composer.json ./
 RUN composer install --no-dev
 COPY . ./
 
-CMD ["php", "bin/sserver.php"]
+CMD ["php", "bin/server.php"]
 
 
