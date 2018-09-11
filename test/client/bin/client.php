@@ -7,8 +7,8 @@ require __DIR__.'/../vendor/autoload.php';
 
 $logger = new Logger('client');
 try {
-//    $logger->pushHandler(new StreamHandler('./logs/service.log', Logger::DEBUG));
-//    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
+    $logger->pushHandler(new StreamHandler('./logs/service.log', Logger::DEBUG));
+    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
 } catch (Exception $e) {
 
 }
@@ -24,7 +24,7 @@ try {
 $client = new swoole_client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
 
 $client->on("connect", function(swoole_client $cli) use ($logger) {
-    swoole_timer_tick(1, function () use ($cli, $logger) {
+    swoole_timer_tick(10, function () use ($cli, $logger) {
         $request = [
             'protocol' => '1.0',
             'action' => 'count',

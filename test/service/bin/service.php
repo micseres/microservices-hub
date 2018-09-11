@@ -41,7 +41,7 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
     $cli->send(json_encode($request));
     $logger->info("SENT REGISTER REQUEST TO SERVER", $request);
 
-    swoole_timer_tick(100, function () use ($cli, $logger) {
+    swoole_timer_tick(1000, function () use ($cli, $logger) {
         $request = [
             'protocol' => '1.0',
             'action' => 'register',

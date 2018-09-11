@@ -45,12 +45,12 @@ abstract class ServicesPortListener
 
         $request = new ServiceRequest($data);
 
-        $response = $this->requestHandler->handle($request);
-
-        if (null !== $response) {
-            $server->send($fd, json_encode($response->serialize()));
-            $this->app->getLogger()->error("SERVICE SOCKET send ERROR RESPONSE to {$fd} from {$reactorId}", (array)$response);
-        } else {
+//        $response = $this->requestHandler->handle($request);
+//
+//        if (null !== $response) {
+//            $server->send($fd, json_encode($response->serialize()));
+//            $this->app->getLogger()->error("SERVICE SOCKET send ERROR RESPONSE to {$fd} from {$reactorId}", (array)$response);
+//        } else {
             /**@todo PUT SOME REGISTRY HERE **/
             if ($request->getRoute() === 'system' && $request->getAction() === 'register') {
                 $router = $this->app->getRouter();
@@ -95,6 +95,6 @@ abstract class ServicesPortListener
                 $this->app->getLogger()->info("QUERY ITEM NOT FOUND", (array)$queryItem);
 
             }
-        }
+//        }
     }
 }
