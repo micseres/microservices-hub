@@ -22,7 +22,6 @@ final class ServiceRequest extends Request
     public function rules(): array
     {
         return [
-            'protocol' => 'required',
             'action' => 'required',
             'route' => 'required',
             'message' => 'required',
@@ -38,8 +37,11 @@ final class ServiceRequest extends Request
         $messages = [];
 
         foreach ($this->rules() as $key => $value) {
-            if ($value === 'required' && null === $this->{'get'.ucfirst($key)}()) {
-                $messages[] = [$key => $value];
+            $method = 'get'.ucfirst($key);
+            if (method_exists($this,$method)) {
+                if ($value === 'required' && null === $this->{$method}()) {
+                    $messages[] = [$key => $value];
+                }
             }
         }
 

@@ -42,12 +42,12 @@ try {
 
 $router = new Router();
 
-$router->addRoute(new \Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute('fibonacci'));
+$fibonacciClientRequestQuery = new \Micseres\ServiceHub\Server\Exchange\ClientRequestQuery();
+$fibonacciServiceResponseQuery = new \Micseres\ServiceHub\Server\Exchange\ServiceResponseQuery();
 
-$clientRequestQuery = new \Micseres\ServiceHub\Server\Exchange\ClientRequestQuery();
-$serviceResponseQuery = new \Micseres\ServiceHub\Server\Exchange\ServiceResponseQuery();
+$router->addRoute(new \Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute('fibonacci', $fibonacciClientRequestQuery, $fibonacciServiceResponseQuery));
 
-$app = new App($configuration, $logger, $router, $clientRequestQuery, $serviceResponseQuery);
+$app = new App($configuration, $logger, $router);
 
 $server = new BaseServer($app);
 

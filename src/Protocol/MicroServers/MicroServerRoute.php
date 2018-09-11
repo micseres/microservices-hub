@@ -8,6 +8,9 @@
 
 namespace Micseres\ServiceHub\Protocol\MicroServers;
 
+use Micseres\ServiceHub\Server\Exchange\ClientRequestQuery;
+use Micseres\ServiceHub\Server\Exchange\ServiceResponseQuery;
+
 /**
  * Class MicroServerRoute
  * @package Micseres\ServiceHub\Protocol\MicroServers
@@ -23,14 +26,26 @@ class MicroServerRoute implements MicroServerRouteInterface
      * @var MicroServer[]
      */
     private $servers = [];
+    /**
+     * @var ClientRequestQuery
+     */
+    private $clientRequestQuery;
+    /**
+     * @var ServiceResponseQuery
+     */
+    private $serviceResponseQuery;
 
     /**
      * MicroServerRoute constructor.
      * @param $route
+     * @param ClientRequestQuery $clientRequestQuery
+     * @param ServiceResponseQuery $serviceResponseQuery
      */
-    public function __construct($route)
+    public function __construct($route, ClientRequestQuery $clientRequestQuery, ServiceResponseQuery $serviceResponseQuery)
     {
         $this->route = $route;
+        $this->clientRequestQuery = $clientRequestQuery;
+        $this->serviceResponseQuery = $serviceResponseQuery;
     }
 
     /**
@@ -104,5 +119,21 @@ class MicroServerRoute implements MicroServerRouteInterface
     public function removeServer(int $index)
     {
         unset($this->servers[$index]);
+    }
+
+    /**
+     * @return ClientRequestQuery
+     */
+    public function getClientRequestQuery(): ClientRequestQuery
+    {
+        return $this->clientRequestQuery;
+    }
+
+    /**
+     * @return ServiceResponseQuery
+     */
+    public function getServiceResponseQuery(): ServiceResponseQuery
+    {
+        return $this->serviceResponseQuery;
     }
 }

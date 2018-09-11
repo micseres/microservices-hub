@@ -16,7 +16,7 @@ try {
 $logger2 = new Logger('result');
 try {
     $logger2->pushHandler(new StreamHandler('./logs/result.log', Logger::DEBUG));
-//    $logger2->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
+    $logger2->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
 } catch (Exception $e) {
 
 }
@@ -24,7 +24,7 @@ try {
 $client = new swoole_client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
 
 $client->on("connect", function(swoole_client $cli) use ($logger) {
-    swoole_timer_tick(10, function () use ($cli, $logger) {
+    swoole_timer_tick(2, function () use ($cli, $logger) {
         $request = [
             'protocol' => '1.0',
             'action' => 'count',
@@ -35,7 +35,7 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
             ]
         ];
 
-//        $logger->info("SENT DATA TO SERVER", $request);
+        $logger->info("SENT DATA TO SERVER", $request);
 
         $cli->send(json_encode($request));
     });
@@ -43,7 +43,7 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
 
 $client->on("receive", function(swoole_client $cli, $data) use ($logger, $logger2) {
     $response = json_decode($data, true);
-    //$logger->info("RECEIVE DATA FROM SERVER", $response);
+    $logger->info("RECEIVE DATA FROM SERVER", $response);
 
     if ($response['action'] !== 'accepted' && $response['action'] !== 'error') {
         if (isset($response['payload']['fibonacci'])) {
@@ -52,8 +52,6 @@ $client->on("receive", function(swoole_client $cli, $data) use ($logger, $logger
             $logger2->error("FAIL", array($response));
         }
     }
-
-    usleep(500);
 });
 
 

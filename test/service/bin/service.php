@@ -83,8 +83,6 @@ $client->on("receive", function(swoole_client $cli, $data) use ($logger) {
     } else {
         $logger->info("RECEIVE REGISTER DATA FROM SERVER", $request);
     }
-
-    usleep(500);
 });
 
 $client->on("error", function(swoole_client $cli) use ($logger) {

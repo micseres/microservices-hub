@@ -31,7 +31,6 @@ class ValidateMiddleware implements MiddlewareInterface
 
         if (null !== $constraints) {
             $errorResponse = new Response();
-            $errorResponse->setProtocol("1.0");
             $errorResponse->setAction("error");
             $errorResponse->setRoute("system");
             $errorResponse->setMessage("Invalid request");

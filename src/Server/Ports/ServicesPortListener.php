@@ -45,12 +45,12 @@ abstract class ServicesPortListener
 
         $request = new ServiceRequest($data);
 
-//        $response = $this->requestHandler->handle($request);
-//
-//        if (null !== $response) {
-//            $server->send($fd, json_encode($response->serialize()));
-//            $this->app->getLogger()->error("SERVICE SOCKET send ERROR RESPONSE to {$fd} from {$reactorId}", (array)$response);
-//        } else {
+        $response = $this->requestHandler->handle($request);
+
+        if (null !== $response) {
+            $server->send($fd, json_encode($response->serialize()));
+            $this->app->getLogger()->error("SERVICE SOCKET send ERROR RESPONSE to {$fd} from {$reactorId}", (array)$response);
+        } else {
             /**@todo PUT SOME REGISTRY HERE **/
             if ($request->getRoute() === 'system' && $request->getAction() === 'register') {
                 $router = $this->app->getRouter();
@@ -64,7 +64,6 @@ abstract class ServicesPortListener
                 $this->app->getLogger()->info("ADD micro server {$microServiceServer->getIp()} to {$request->getPayload()['route']}", (array)$microServiceServer);
 
                 $response = new Response();
-                $response->setProtocol("1.0");
                 $response->setAction("registered");
                 $response->setRoute($request->getRoute());
                 $response->setMessage("Service registered for work");
@@ -75,7 +74,10 @@ abstract class ServicesPortListener
                 $server->send($fd, json_encode($response->serialize()));
                 $this->app->getLogger()->info("SERVICE SOCKET REGISTERED to {$fd} from {$reactorId}", (array)$response);
             } else {
-                $queryItem = $this->app->getServiceResponseQuery()->pick($request->getPayload()['task_id']);
+                $router = $this->app->getRouter();
+                $route = $router->getRoute($request->getRoute());
+
+                $queryItem = $route->getServiceResponseQuery()->pick($request->getPayload()['task_id']);
 
                 if (null !== $queryItem) {
                     $request2 = [
@@ -90,11 +92,10 @@ abstract class ServicesPortListener
                     ];
 
                     $server->send($queryItem->getClient()->getFd(), json_encode($request2), $queryItem->getClient()->getReactorId());
+                } else {
+                    $this->app->getLogger()->info("QUERY ITEM NOT FOUND", (array)$queryItem);
                 }
-
-                $this->app->getLogger()->info("QUERY ITEM NOT FOUND", (array)$queryItem);
-
             }
-//        }
+        }
     }
 }

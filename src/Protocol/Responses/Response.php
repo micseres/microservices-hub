@@ -16,10 +16,6 @@ use ReflectionClass;
  */
 class Response implements ResponseInterface
 {
-
-    /** @var string */
-    private $protocol;
-
     /** @var string */
     private $action;
 
@@ -31,22 +27,6 @@ class Response implements ResponseInterface
 
     /** @var array  */
     private $payload = [];
-
-    /**
-     * @return string
-     */
-    public function getProtocol(): string
-    {
-        return $this->protocol;
-    }
-
-    /**
-     * @param string $protocol
-     */
-    public function setProtocol(string $protocol): void
-    {
-        $this->protocol = $protocol;
-    }
 
     /**
      * @return string

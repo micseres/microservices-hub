@@ -59,11 +59,10 @@ abstract class ClientsPortListener
                 $client = new Client($fd, $reactorId);
 
                 $requestQueryItem = new RequestQueryItem($request, $service, $client);
-                $query = $this->app->getClientRequestQuery();
+                $query = $serviceRoute->getClientRequestQuery();
                 $query->push($requestQueryItem);
 
                 $response = new Response();
-                $response->setProtocol("1.0");
                 $response->setAction("accepted");
                 $response->setRoute("system");
                 $response->setMessage("Request accepted");
@@ -76,7 +75,6 @@ abstract class ClientsPortListener
                 $this->app->getLogger()->info("CLIENT SOCKET send ACCEPT RESPONSE to {$fd} from {$reactorId}", (array)$response);
             } else {
                 $errorResponse = new Response();
-                $errorResponse->setProtocol("1.0");
                 $errorResponse->setAction("error");
                 $errorResponse->setRoute("system");
                 $errorResponse->setMessage("Service not found");

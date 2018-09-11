@@ -1,9 +1,9 @@
 version: '3'
 services:
 
-  server:
+  server10:
     build: ./
-    container_name: server
+    container_name: server10
     image: zogxray/micro-services-hub
     environment:
      - SERVER_LIVE_INTERVAL=30
@@ -20,30 +20,30 @@ services:
     volumes:
       - ./:/app
 
-  client1:
+  client10:
     build: ./test/client
-    container_name: client1
+    container_name: client10
     image: zogxray/micro-services-client
     networks:
       hub:
         ipv4_address: 10.5.0.22
     depends_on:
-      - server
+      - server10
     volumes:
       - ./test/client:/app
 #
-#  client2:
+#  client20:
 #    build: ./test/client
-#    container_name: client2
+#    container_name: client20
 #    image: zogxray/micro-services-client
 #    networks:
 #      hub:
 #        ipv4_address: 10.5.0.23
 #    depends_on:
-#      - server
+#      - server10
 #    volumes:
 #      - ./test/client:/app
-#
+
 #  client3:
 #    build: ./test/client
 #    container_name: client3
@@ -140,29 +140,29 @@ services:
 #    volumes:
 #    - ./test/client:/app
 
-  service1:
+  service10:
     build: ./test/service
-    container_name: service1
+    container_name: service10
     image: zogxray/micro-services-service
     networks:
       hub:
         ipv4_address: 10.5.0.116
     depends_on:
-      - server
+      - server10
     volumes:
     - ./test/service:/app
 
-#  service2:
-#    build: ./test/service
-#    container_name: service2
-#    image: zogxray/micro-services-service
-#    networks:
-#      hub:
-#        ipv4_address: 10.5.0.117
-#    depends_on:
-#      - server
-##    volumes:
-##    - ./test/service:/app
+  service20:
+    build: ./test/service
+    container_name: service20
+    image: zogxray/micro-services-service
+    networks:
+      hub:
+        ipv4_address: 10.5.0.117
+    depends_on:
+      - server10
+    volumes:
+    - ./test/service:/app
 #
 #  service3:
 #    build: ./test/service

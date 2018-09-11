@@ -24,7 +24,7 @@ class ClientRequestQuery
      */
     public function shift(): ?RequestQueryItem
     {
-        if (!isset($this->items[0])) {
+        if (!count($this->items)) {
             return null;
         }
 
@@ -48,6 +48,6 @@ class ClientRequestQuery
      */
     public function push(RequestQueryItem $item): void
     {
-        $this->items[] = $item;
+        $this->items[$item->getId()] = $item;
     }
 }

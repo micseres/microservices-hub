@@ -60,31 +60,35 @@ class BaseServerListener implements BaseServerListenerInterface
      */
     public function workWithClientRequestQuery(int $interval, SServer $server)
     {
-        $task = $this->app->getClientRequestQuery()->shift();
+        $routes = $this->app->getRouter()->getRoutes();
 
-        if (null !== $task) {
-            $request = $task->getRequest();
+        foreach ($routes as $route) {
+            $task = $route->getClientRequestQuery()->shift();
 
-            $request2 = [
-                'protocol' => '1.0',
-                'action' => $request->getAction(),
-                'route' => $request->getRoute(),
-                'message' => $request->getMessage(),
-                'payload' => [
-                    'number' => $request->getPayload()['number'],
-                    'task_id' => $task->getId(),
-                    'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
-                ]
-            ];
+            if (null !== $task) {
+                $request = $task->getRequest();
 
-            $isSend = $server->send($task->getServer()->getFd(), json_encode($request2), $task->getServer()->getReactorId());
+                $request2 = [
+                    'protocol' => '1.0',
+                    'action' => $request->getAction(),
+                    'route' => $request->getRoute(),
+                    'message' => $request->getMessage(),
+                    'payload' => [
+                        'number' => $request->getPayload()['number'],
+                        'task_id' => $task->getId(),
+                        'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+                    ]
+                ];
 
-            if (true === $isSend) {
-                $this->app->getServiceResponseQuery()->push($task);
-                $this->app->getLogger()->info("BASE SEND REQUEST TO SERVICE", (array)$request);
-            } else {
-                $this->app->getClientRequestQuery()->push($task);
-                $this->app->getLogger()->error("BASE FAILED SEND REQUEST TO SERVICE", (array)$request);
+                $isSend = $server->send($task->getServer()->getFd(), json_encode($request2), $task->getServer()->getReactorId());
+
+                if (true === $isSend) {
+                    $route->getServiceResponseQuery()->push($task);
+                    $this->app->getLogger()->info("BASE SEND REQUEST TO SERVICE", (array)$request);
+                } else {
+                    $route->getClientRequestQuery()->push($task);
+                    $this->app->getLogger()->error("BASE FAILED SEND REQUEST TO SERVICE", (array)$request);
+                }
             }
         }
     }

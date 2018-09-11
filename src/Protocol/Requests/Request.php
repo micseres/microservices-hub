@@ -17,9 +17,6 @@ use ReflectionClass;
 abstract class Request implements RequestInterface
 {
     /** @var string */
-    private $protocol;
-
-    /** @var string */
     private $action;
 
     /** @var string */
@@ -34,22 +31,6 @@ abstract class Request implements RequestInterface
     public function __construct(string $json)
     {
         $this->deserialize($json);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProtocol()
-    {
-        return $this->protocol;
-    }
-
-    /**
-     * @param mixed $protocol
-     */
-    public function setProtocol($protocol): void
-    {
-        $this->protocol = $protocol;
     }
 
     /**
