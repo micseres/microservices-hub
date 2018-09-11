@@ -14,17 +14,27 @@ use ReflectionClass;
  * Class Request
  * @package Micseres\ServiceHub\Protocol\Requests
  */
-class Request implements RequestInterface
+abstract class Request implements RequestInterface
 {
+    /** @var string */
     private $protocol;
 
+    /** @var string */
     private $action;
 
+    /** @var string */
     private $route;
 
+    /** @var string */
     private $message;
 
+    /** @var array  */
     private $payload = [];
+
+    public function __construct(string $json)
+    {
+        $this->deserialize($json);
+    }
 
     /**
      * @return mixed

@@ -30,4 +30,9 @@ interface RequestInterface
      * @return array
      */
     public function serialize($object = null) :array;
+
+    /**
+     * @return array|null
+     */
+    public function validate(): ?array;
 }

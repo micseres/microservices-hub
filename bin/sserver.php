@@ -6,6 +6,8 @@
  * Time: 16:55
  */
 
+use Micseres\ServiceHub\Protocol\Middleware\ClosureBuilder;
+use Micseres\ServiceHub\Protocol\Middleware\RequestHandler;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\RavenHandler;
@@ -30,9 +32,9 @@ $logger = new Logger('server');
 $client = new Raven_Client($configuration->getParameter('SENTRY'));
 
 try {
-//    $logger->pushHandler(new StreamHandler('./var/logs/server.log', Logger::DEBUG));
-//    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
-//    $logger->pushHandler(new RavenHandler($client, Logger::ERROR));
+    $logger->pushHandler(new StreamHandler('./var/logs/server.log', Logger::DEBUG));
+    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
+    $logger->pushHandler(new RavenHandler($client, Logger::ERROR));
 
 } catch (Exception $e) {
 
@@ -67,6 +69,9 @@ $server->createBaseServer(
     $setting
 );
 
+$requestHandler = new RequestHandler(new ClosureBuilder());
+
+
 $serviceListenerSetting = [
 //    'ssl_cert_file' => 'ssl.cert',
 //    'ssl_key_file' => 'ssl.key',
@@ -74,7 +79,7 @@ $serviceListenerSetting = [
 
 $portEvents = PortListenerInterface::UDP_EVENTS;
 
-$serviceListener = new UDPServicesPortListener($app);
+$serviceListener = new UDPServicesPortListener($app, $requestHandler);
 $server->addListener(
     $serviceListener,
     $portEvents,
@@ -90,7 +95,7 @@ $clientListenerSetting = [
 ];
 
 
-$clientListener = new UDPClientsPortListener($app);
+$clientListener = new UDPClientsPortListener($app, $requestHandler);
 
 $server->addListener(
     $clientListener,

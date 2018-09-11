@@ -104,8 +104,6 @@ class BaseServerListener implements BaseServerListenerInterface
         $time = 1;
         $server->tick($time, [$this, 'workWithClientRequestQuery'], $server);
 
-        $this->app->getLogger()->info("BASE WORKER {$worker_id} TIMER {$time} FOR ROUTES START");
-
         $this->app->getLogger()->info("BASE WORKER {$worker_id} START");
     }
 

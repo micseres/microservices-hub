@@ -9,6 +9,7 @@
 namespace Micseres\ServiceHub\Server\Ports;
 
 use Micseres\ServiceHub\Protocol\MicroServers\MicroServer;
+use Micseres\ServiceHub\Protocol\Middleware\RequestHandler;
 use Micseres\ServiceHub\Protocol\Requests\ServiceRequest;
 use Micseres\ServiceHub\Protocol\Responses\Response;
 use \Swoole\Server as SServer;
@@ -25,6 +26,12 @@ abstract class ServicesPortListener
      */
     protected $app;
 
+
+    /**
+     * @var RequestHandler
+     */
+    protected $requestHandler;
+
     /**
      * @param SServer $server
      * @param int $fd
@@ -35,30 +42,17 @@ abstract class ServicesPortListener
     public function onReceive(SServer $server, int $fd, int $reactorId, string $data)
     {
         $this->app->getLogger()->info("SERVICE SOCKET from {$fd} receive data to {$reactorId}");
-        $request = new ServiceRequest();
 
-        $request->deserialize($data);
+        $request = new ServiceRequest($data);
 
-        $constraints = $request->validate();
+        $response = $this->requestHandler->handle($request);
 
-        if (null !== $constraints) {
-            $errorResponse = new Response();
-            $errorResponse->setProtocol("1.0");
-            $errorResponse->setAction("error");
-            $errorResponse->setRoute($request->getRoute());
-            $errorResponse->setMessage("Invalid request");
-            $errorResponse->setPayload([
-                'constraints' => $constraints,
-                'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
-            ]);
-
-            $server->send($fd, json_encode($errorResponse->serialize()));
-
-            $this->app->getLogger()->info("SERVICE SOCKET send ERROR RESPONSE to {$fd} from {$reactorId}", (array)$errorResponse);
+        if (null !== $response) {
+            $server->send($fd, json_encode($response->serialize()));
+            $this->app->getLogger()->error("SERVICE SOCKET send ERROR RESPONSE to {$fd} from {$reactorId}", (array)$response);
         } else {
             /**@todo PUT SOME REGISTRY HERE **/
             if ($request->getRoute() === 'system' && $request->getAction() === 'register') {
-
                 $router = $this->app->getRouter();
                 $remoteIp = $server->connection_info($fd)["remote_ip"];
                 $remotePort = $server->connection_info($fd)["remote_port"];
@@ -97,6 +91,9 @@ abstract class ServicesPortListener
 
                     $server->send($queryItem->getClient()->getFd(), json_encode($request2), $queryItem->getClient()->getReactorId());
                 }
+
+                $this->app->getLogger()->info("QUERY ITEM NOT FOUND", (array)$queryItem);
+
             }
         }
     }

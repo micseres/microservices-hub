@@ -16,76 +16,82 @@ use ReflectionClass;
  */
 class Response implements ResponseInterface
 {
+
+    /** @var string */
     private $protocol;
 
+    /** @var string */
     private $action;
 
+    /** @var string */
     private $route;
 
+    /** @var string */
     private $message;
 
+    /** @var array  */
     private $payload = [];
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getProtocol()
+    public function getProtocol(): string
     {
         return $this->protocol;
     }
 
     /**
-     * @param mixed $protocol
+     * @param string $protocol
      */
-    public function setProtocol($protocol): void
+    public function setProtocol(string $protocol): void
     {
         $this->protocol = $protocol;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getAction()
+    public function getAction(): string
     {
         return $this->action;
     }
 
     /**
-     * @param mixed $action
+     * @param string $action
      */
-    public function setAction($action): void
+    public function setAction(string $action): void
     {
         $this->action = $action;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getRoute()
+    public function getRoute(): string
     {
         return $this->route;
     }
 
     /**
-     * @param mixed $route
+     * @param string $route
      */
-    public function setRoute($route): void
+    public function setRoute(string $route): void
     {
         $this->route = $route;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
 
     /**
-     * @param mixed $message
+     * @param string $message
      */
-    public function setMessage($message): void
+    public function setMessage(string $message): void
     {
         $this->message = $message;
     }

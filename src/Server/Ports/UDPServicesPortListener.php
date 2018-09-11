@@ -9,6 +9,7 @@
 namespace Micseres\ServiceHub\Server\Ports;
 
 use Micseres\ServiceHub\App;
+use Micseres\ServiceHub\Protocol\Middleware\RequestHandler;
 use \Swoole\Server as SServer;
 
 /**
@@ -21,10 +22,13 @@ class UDPServicesPortListener extends ServicesPortListener implements UDPPortLis
     /**
      * ServicesPortListenerListener constructor.
      * @param App $app
+     * @param RequestHandler $requestHandler
      */
-    public function __construct(App $app)
+    public function __construct(App $app, RequestHandler $requestHandler)
+
     {
         $this->app = $app;
+        $this->requestHandler = $requestHandler;
     }
 
     /**

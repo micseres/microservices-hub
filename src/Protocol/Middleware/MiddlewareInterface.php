@@ -1,16 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: zogxray
- * Date: 03.09.18
- * Time: 17:26
+ * @author: Andrii yakovlev <yawa20@gmail.com>
+ * @since : 05.09.18
  */
 
-namespace Micseres\ServiceHub\Server\Middleware;
+namespace Micseres\ServiceHub\Protocol\Middleware;
 
 use Micseres\ServiceHub\Protocol\Requests\RequestInterface;
 use Micseres\ServiceHub\Protocol\Responses\ResponseInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Interface MiddlewareInterface
@@ -19,9 +16,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 interface MiddlewareInterface
 {
     /**
-     * @param RequestInterface $request
-     * @param RequestHandlerInterface $handler
-     * @return ResponseInterface
+     * @param mixed $request
+     * @param \Closure $next
+     *
+     * @return ResponseInterface|null
      */
-    public function process(RequestInterface $request, RequestHandlerInterface $handler): ResponseInterface;
+    public function handle(RequestInterface $request, \Closure $next): ?ResponseInterface;
 }

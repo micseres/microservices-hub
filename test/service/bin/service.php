@@ -1,6 +1,5 @@
 <?php
 
-
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
@@ -9,8 +8,8 @@ require __DIR__.'/../vendor/autoload.php';
 $logger = new Logger('server');
 
 try {
-//    $logger->pushHandler(new StreamHandler('./logs/service.log', Logger::DEBUG));
-//    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
+    $logger->pushHandler(new StreamHandler('./logs/service.log', Logger::DEBUG));
+    $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
 } catch (Exception $e) {
 
 }

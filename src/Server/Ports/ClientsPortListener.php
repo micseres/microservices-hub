@@ -9,6 +9,7 @@
 namespace Micseres\ServiceHub\Server\Ports;
 
 use Micseres\ServiceHub\Protocol\Client\Client;
+use Micseres\ServiceHub\Protocol\Middleware\RequestHandler;
 use Micseres\ServiceHub\Protocol\Requests\ClientRequest;
 use Micseres\ServiceHub\Protocol\Responses\Response;
 use Micseres\ServiceHub\Server\Exchange\RequestQueryItem;
@@ -27,6 +28,11 @@ abstract class ClientsPortListener
     protected $app;
 
     /**
+     * @var RequestHandler
+     */
+    protected $requestHandler;
+
+    /**
      * @param SServer $server
      * @param int $fd
      * @param int $reactorId
@@ -37,26 +43,12 @@ abstract class ClientsPortListener
     {
         $this->app->getLogger()->info("CLIENT SOCKET from {$fd} receive data to {$reactorId}");
 
-        $request = new ClientRequest();
+        $request = new ClientRequest($data);
+        $response = $this->requestHandler->handle($request);
 
-        $request->deserialize($data);
-
-        $constraints = $request->validate();
-
-        if (null !== $constraints) {
-            $errorResponse = new Response();
-            $errorResponse->setProtocol("1.0");
-            $errorResponse->setAction("error");
-            $errorResponse->setRoute("system");
-            $errorResponse->setMessage("Invalid request");
-            $errorResponse->setPayload([
-                'constraints' => $constraints,
-                'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
-            ]);
-
-            $server->send($fd, json_encode($errorResponse->serialize()));
-
-            $this->app->getLogger()->info("CLIENT SOCKET send ERROR RESPONSE to {$fd} from {$reactorId}", (array)$errorResponse);
+        if (null !== $response) {
+            $server->send($fd, json_encode($response->serialize()));
+            $this->app->getLogger()->error("CLIENT SOCKET invalid request", (array)$response);
         } else {
             $router = $this->app->getRouter();
             $serviceRoute = $router->getRoute($request->getRoute());
@@ -94,7 +86,7 @@ abstract class ClientsPortListener
 
                 $server->send($fd, json_encode($errorResponse->serialize()));
 
-                $this->app->getLogger()->info("CLIENT SOCKET send ERROR RESPONSE to {$fd} from {$reactorId}", (array)$errorResponse);
+                $this->app->getLogger()->error("CLIENT SOCKET server not found", (array)$errorResponse);
             }
         }
     }
