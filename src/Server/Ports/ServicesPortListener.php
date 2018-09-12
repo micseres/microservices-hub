@@ -67,9 +67,6 @@ abstract class ServicesPortListener
                 $response->setAction("registered");
                 $response->setRoute($request->getRoute());
                 $response->setMessage("Service registered for work");
-                $response->setPayload([
-                    'time' => $registeredAt->format('Y-m-d H:i:s.u')
-                ]);
 
                 $server->send($fd, json_encode($response->serialize()));
                 $this->app->getLogger()->info("SERVICE SOCKET REGISTERED to {$fd} from {$reactorId}", (array)$response);
@@ -86,8 +83,7 @@ abstract class ServicesPortListener
                         'route' => $request->getRoute(),
                         'message' => $request->getMessage(),
                         'payload' => [
-                            'fibonacci' => $request->getPayload()['fibonacci'],
-                            'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+                            'fibonacci' => $request->getPayload()['fibonacci']
                         ]
                     ];
 

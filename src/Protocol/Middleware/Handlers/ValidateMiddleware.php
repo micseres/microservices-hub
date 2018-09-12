@@ -35,8 +35,7 @@ class ValidateMiddleware implements MiddlewareInterface
             $errorResponse->setRoute("system");
             $errorResponse->setMessage("Invalid request");
             $errorResponse->setPayload([
-                'constraints' => $constraints,
-                'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+                'constraints' => $constraints
             ]);
 
             return $errorResponse;

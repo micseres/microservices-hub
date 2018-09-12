@@ -8,8 +8,7 @@
 
 namespace Micseres\ServiceHub\Protocol\MicroServers;
 
-use Micseres\ServiceHub\Server\Exchange\ClientRequestQuery;
-use Micseres\ServiceHub\Server\Exchange\ServiceResponseQuery;
+use Micseres\ServiceHub\Server\Exchange\RequestQuery;
 
 /**
  * Class MicroServerRoute
@@ -27,21 +26,21 @@ class MicroServerRoute implements MicroServerRouteInterface
      */
     private $servers = [];
     /**
-     * @var ClientRequestQuery
+     * @var RequestQuery
      */
     private $clientRequestQuery;
     /**
-     * @var ServiceResponseQuery
+     * @var RequestQuery
      */
     private $serviceResponseQuery;
 
     /**
      * MicroServerRoute constructor.
      * @param $route
-     * @param ClientRequestQuery $clientRequestQuery
-     * @param ServiceResponseQuery $serviceResponseQuery
+     * @param RequestQuery $clientRequestQuery
+     * @param RequestQuery $serviceResponseQuery
      */
-    public function __construct($route, ClientRequestQuery $clientRequestQuery, ServiceResponseQuery $serviceResponseQuery)
+    public function __construct($route, RequestQuery $clientRequestQuery, RequestQuery $serviceResponseQuery)
     {
         $this->route = $route;
         $this->clientRequestQuery = $clientRequestQuery;
@@ -69,7 +68,6 @@ class MicroServerRoute implements MicroServerRouteInterface
      */
     public function getServer(): ?MicroServer
     {
-        /** @var @todo WRITE SOME FINE $count */
         $count = count($this->servers);
 
         return $this->servers[rand(0, $count-1)];
@@ -103,10 +101,8 @@ class MicroServerRoute implements MicroServerRouteInterface
         }
 
         if (null !== $updateServer) {
-            var_dump('update');
             $updateServer->setTime(new \DateTime('now'));
         } else {
-            var_dump('add');
             $this->servers[] = $server;
         }
     }
@@ -120,17 +116,17 @@ class MicroServerRoute implements MicroServerRouteInterface
     }
 
     /**
-     * @return ClientRequestQuery
+     * @return RequestQuery
      */
-    public function getClientRequestQuery(): ClientRequestQuery
+    public function getClientRequestQuery(): RequestQuery
     {
         return $this->clientRequestQuery;
     }
 
     /**
-     * @return ServiceResponseQuery
+     * @return RequestQuery
      */
-    public function getServiceResponseQuery(): ServiceResponseQuery
+    public function getServiceResponseQuery(): RequestQuery
     {
         return $this->serviceResponseQuery;
     }

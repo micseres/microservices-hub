@@ -11,7 +11,7 @@ namespace Micseres\ServiceHub\Server;
 use Micseres\ServiceHub\App;
 use Micseres\ServiceHub\Protocol\MicroServers\MicroServerRoute;
 use Micseres\ServiceHub\Protocol\Requests\ServerRequest;
-use Micseres\ServiceHub\Server\Exchange\RequestQueryItem;
+use Micseres\ServiceHub\Server\Exchange\RequestQuery;
 use \Swoole\Server as SServer;
 
 /**
@@ -75,8 +75,7 @@ class BaseServerListener implements BaseServerListenerInterface
                     'message' => $request->getMessage(),
                     'payload' => [
                         'number' => $request->getPayload()['number'],
-                        'task_id' => $task->getId(),
-                        'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+                        'task_id' => $task->getId()
                     ]
                 ];
 

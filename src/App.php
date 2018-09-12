@@ -9,8 +9,7 @@
 namespace Micseres\ServiceHub;
 
 use Micseres\ServiceHub\Protocol\Router;
-use Micseres\ServiceHub\Server\Exchange\ClientRequestQuery;
-use Micseres\ServiceHub\Server\Exchange\ServiceResponseQuery;
+use Micseres\ServiceHub\Server\Exchange\RequestQuery;
 use Micseres\ServiceHub\Service\Configuration;
 use Monolog\Logger;
 

@@ -66,9 +66,6 @@ abstract class ClientsPortListener
                 $response->setAction("accepted");
                 $response->setRoute("system");
                 $response->setMessage("Request accepted");
-                $response->setPayload([
-                    'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
-                ]);
 
                 $server->send($fd, json_encode($response->serialize()));
 
@@ -78,9 +75,6 @@ abstract class ClientsPortListener
                 $errorResponse->setAction("error");
                 $errorResponse->setRoute("system");
                 $errorResponse->setMessage("Service not found");
-                $errorResponse->setPayload([
-                    'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
-                ]);
 
                 $server->send($fd, json_encode($errorResponse->serialize()));
 

@@ -33,8 +33,7 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
         'message' => 'Register me, I am ready for play',
         'payload' => [
             'route' => 'fibonacci',
-            'load' => rand(0,99),
-            'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+            'load' => rand(0,99)
         ]
     ];
 
@@ -49,8 +48,7 @@ $client->on("connect", function(swoole_client $cli) use ($logger) {
             'message' => 'Register me, I am ready for play',
             'payload' => [
                 'route' => 'fibonacci',
-                'load' => rand(0,99),
-                'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+                'load' => rand(0,99)
             ]
         ];
 
@@ -72,8 +70,7 @@ $client->on("receive", function(swoole_client $cli, $data) use ($logger) {
             'message' => 'That is number',
             'payload' => [
                 'fibonacci' => 1,//fibonacci($request['payload']['number']),
-                'task_id' => $request['payload']['task_id'],
-                'time' => (new \DateTime('now'))->format('Y-m-d H:i:s.u')
+                'task_id' => $request['payload']['task_id']
             ]
         ];
 

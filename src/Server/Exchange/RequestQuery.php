@@ -12,7 +12,7 @@ namespace Micseres\ServiceHub\Server\Exchange;
  * Class RequestStack
  * @package Micseres\ServiceHub\Server\Exchange
  */
-class ClientRequestQuery
+class RequestQuery
 {
     /**
      * @var RequestQueryItem[]
@@ -32,15 +32,20 @@ class ClientRequestQuery
     }
 
     /**
-     * @return array
+     * @param string $id
+     * @return RequestQueryItem|null
      */
-    public function all(): array
+    public function pick(string $id): ?RequestQueryItem
     {
-        $items = $this->items;
+        if (!isset($this->items[$id])) {
+            return null;
+        }
 
-        $this->items = [];
+        $item = $this->items[$id];
 
-        return $items;
+        unset($this->items[$id]);
+
+        return $item;
     }
 
     /**
